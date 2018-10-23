@@ -12,11 +12,14 @@ module subpixel_interpolation(clk,reset, in_buffer,
   parameter sizeofPixel = 8;
   input clk;
   input reset;
-  input  [7:0] in_buffer [0:(num_pixel+7)-1][0:(num_pixel+7)-1]; //for (4+7)*(4+7) interpolation
-  output [7:0] out_A [0:(num_pixel+7)-1][0:num_pixel-1]; //feedback buffer
-  output [7:0] out_B [0:(num_pixel+7)-1][0:num_pixel-1]; //feedback buffer
-  output [7:0] out_C [0:(num_pixel+7)-1][0:num_pixel-1]; //feedback buffer
-  output [127:0] out_buffer [0:(num_pixel-1)][0:(num_pixel-1)]; //for inner 4*4 only. 4*16 values per pixel
+  input  [1799:0] in_buffer; //for (4+7)*(4+7) interpolation
+  output [959:0] out_A; //feedback buffer
+  output [959:0] out_B; //feedback buffer
+  output [959:0] out_C; //feedback buffer
+  /////////////////////////////
+  output [127:0] out_buffer; //THIS NEEDS TO BE SET CORRECTLY //for inner 4*4 only. 4*16 values per pixel
+  /////////////////////////////
+
 
   // new inputs from outputs of last cycle
   wire [7:0] temp_A [0:(num_pixel+7)-1][0:num_pixel-1];
@@ -64,100 +67,85 @@ module subpixel_interpolation(clk,reset, in_buffer,
 
 endmodule
 
-
-module outputMux(
-  any_in_a,
-  any_in_b,
-  any_in_c,
-  in_a,
-  in_b,
-  in_c,
-  sel,
-  start_index,
-  clk,
-  reset,
-  out_a,
-  out_b,
-  out_c,
-  out
-	);
-
-  parameter num_pixel = 8;
-  input [7:0] any_out_A [0:(num_pixel+7)-1][0:num_pixel-1];
-  input [7:0] any_out_B [0:(num_pixel+7)-1][0:num_pixel-1];
-  input [7:0] any_out_C [0:(num_pixel+7)-1][0:num_pixel-1];
-  input [7:0] in_a [0:(num_pixel+7)-1][0:num_pixel-1];
-  input [7:0] in_b [0:(num_pixel+7)-1][0:num_pixel-1];
-  input [7:0] in_c [0:(num_pixel+7)-1][0:num_pixel-1];
-  input [7:0] sel;
-  input [7:0] start_index;
-  output [7:0] out_a [0:(num_pixel+7)-1][0:num_pixel-1]; //feedback buffer
-  output [7:0] out_a [0:(num_pixel+7)-1][0:num_pixel-1]; //feedback buffer
-  output [7:0] out_c [0:(num_pixel+7)-1][0:num_pixel-1]; //feedback buffer
-  output [127:0] out [0:(num_pixel-1)][0:(num_pixel-1)];
-
-  reg [7:0] out_a [0:(num_pixel+7)-1][0:num_pixel-1];
-  reg [7:0] out_a [0:(num_pixel+7)-1][0:num_pixel-1];
-  reg [7:0] out_c [0:(num_pixel+7)-1][0:num_pixel-1];
-  reg [127:0] out [0:(num_pixel-1)][0:(num_pixel-1)];
-
-  parameter integer_rows = num_pixel+7;
-  parameter integer_cols = (num_pixel+7)*2
-  parameter half_a_cols = integer_cols + num_pixel
-  parameter half_b_cols = integer_cols + num_pixel*2
-  parameter half_c_cols = integer_cols + num_pixel*3
-
-  always @(posedge clock or posedge reset)
- 	begin: MUX
-    if (sel < integer_rows) begin
-      out_a <= any_out_A;
-      out_b <= any_out_B;
-      out_c <= any_out_C;
-      //and out <= some conct. of any_out_A, any_out_B, any_out_C based on start_index.
-    end else if (sel < integer_cols) begin
-      out_a <= in_a;
-      out_b <= in_b;
-      out_c <= in_c;
-      //and out <= some conct. of any_out_A, any_out_B, any_out_C based on start_index.
-    end else if (sel < half_a_cols) begin
-      out_a <= in_a;
-      out_b <= in_b;
-      out_c <= in_c;
-      //and out <= some conct. of any_out_A, any_out_B, any_out_C based on start_index.
-    end else if (sel < half_b_cols) begin
-      out_a <= in_a;
-      out_b <= in_b;
-      out_c <= in_c;
-      //and out <= some conct. of any_out_A, any_out_B, any_out_C based on start_index.
-    end else if (sel < half_c_cols) begin
-      out_a <= in_a;
-      out_b <= in_b;
-      out_c <= in_c;
-      //and out <= some conct. of any_out_A, any_out_B, any_out_C based on start_index.
-    end else begin
-      out_a <= in_a;
-      out_b <= in_b;
-      out_c <= in_c;
-      out <= 0;
- 	end
- endmodule //End Of Module mux
-
-endmodule
-
-
-// module shift_array(clk, reset, inputPixels, startIndex, outputPixels);
+//
+// module outputMux(
+//   any_in_a,
+//   any_in_b,
+//   any_in_c,
+//   in_a,
+//   in_b,
+//   in_c,
+//   sel,
+//   start_index,
+//   clk,
+//   reset,
+//   out_a,
+//   out_b,
+//   out_c,
+//   out
+// 	);
+//
 //   parameter num_pixel = 8;
-//   input clk;
-//   input reset;
-//   input [((num_pixel+7)*8)-1:0] inputPixels;
-//   input [7:0] startIndex;
-//   output [63:0] outputPixels;
-
-//   always @(posedge clock)
-
-
-// endmodule
-
+//   input [7:0] any_out_A [0:(num_pixel+7)-1][0:num_pixel-1];
+//   input [7:0] any_out_B [0:(num_pixel+7)-1][0:num_pixel-1];
+//   input [7:0] any_out_C [0:(num_pixel+7)-1][0:num_pixel-1];
+//   input [7:0] in_a [0:(num_pixel+7)-1][0:num_pixel-1];
+//   input [7:0] in_b [0:(num_pixel+7)-1][0:num_pixel-1];
+//   input [7:0] in_c [0:(num_pixel+7)-1][0:num_pixel-1];
+//   input [7:0] sel;
+//   input [7:0] start_index;
+//   output [7:0] out_a [0:(num_pixel+7)-1][0:num_pixel-1]; //feedback buffer
+//   output [7:0] out_a [0:(num_pixel+7)-1][0:num_pixel-1]; //feedback buffer
+//   output [7:0] out_c [0:(num_pixel+7)-1][0:num_pixel-1]; //feedback buffer
+//   output [127:0] out [0:(num_pixel-1)][0:(num_pixel-1)];
+//
+//   reg [7:0] out_a [0:(num_pixel+7)-1][0:num_pixel-1];
+//   reg [7:0] out_a [0:(num_pixel+7)-1][0:num_pixel-1];
+//   reg [7:0] out_c [0:(num_pixel+7)-1][0:num_pixel-1];
+//   reg [127:0] out [0:(num_pixel-1)][0:(num_pixel-1)];
+//
+//   parameter integer_rows = num_pixel+7;
+//   parameter integer_cols = (num_pixel+7)*2
+//   parameter half_a_cols = integer_cols + num_pixel
+//   parameter half_b_cols = integer_cols + num_pixel*2
+//   parameter half_c_cols = integer_cols + num_pixel*3
+//
+//   always @(posedge clock or posedge reset)
+//  	begin: MUX
+//     if (sel < integer_rows) begin
+//       out_a <= any_out_A;
+//       out_b <= any_out_B;
+//       out_c <= any_out_C;
+//       //and out <= some conct. of any_out_A, any_out_B, any_out_C based on start_index.
+//     end else if (sel < integer_cols) begin
+//       out_a <= in_a;
+//       out_b <= in_b;
+//       out_c <= in_c;
+//       //and out <= some conct. of any_out_A, any_out_B, any_out_C based on start_index.
+//     end else if (sel < half_a_cols) begin
+//       out_a <= in_a;
+//       out_b <= in_b;
+//       out_c <= in_c;
+//       //and out <= some conct. of any_out_A, any_out_B, any_out_C based on start_index.
+//     end else if (sel < half_b_cols) begin
+//       out_a <= in_a;
+//       out_b <= in_b;
+//       out_c <= in_c;
+//       //and out <= some conct. of any_out_A, any_out_B, any_out_C based on start_index.
+//     end else if (sel < half_c_cols) begin
+//       out_a <= in_a;
+//       out_b <= in_b;
+//       out_c <= in_c;
+//       //and out <= some conct. of any_out_A, any_out_B, any_out_C based on start_index.
+//     end else begin
+//       out_a <= in_a;
+//       out_b <= in_b;
+//       out_c <= in_c;
+//       out <= 0;
+//  	end
+//  endmodule //End Of Module mux
+//
+//
 module FIR_A(inputPixels, subPixel,clock,reset);
   input [63:0] inputPixels; // flattened input pixels
   input clock;
