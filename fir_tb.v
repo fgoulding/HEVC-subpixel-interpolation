@@ -1,52 +1,75 @@
+`include "input_mux_2.v"
 
-`timescale 1ns / 1ps
 module tb;
-    reg clk, reset;
+  reg clk, reset;
   reg [55:0] inputPixels;
-  wire [7:0] subPixel;
+  reg [7:0] sel;
   reg [7:0] im_memory [0:14][0:14];
-  wire [7:0] mux_out [0:14];
+  reg [1799:0] integer_array;
+  reg [959:0] a_half_array;
+  reg [959:0] b_half_array;
+  reg [959:0] c_half_array;
+  wire [119:0] mux_out;
 
-  reg [23:0] data [0:3];
-// module subpixel_interpolation(clk,reset, im_memory,
-//                               out_A, out_B, out_C, out_buffer);// FIR_A dut(inputPixels,subPixel,clk,reset);
-
+  input_array_mux dut(
+    .clock(clk),
+    .reset(reset),
+    .integer_array(integer_array),
+    .a_half_array(a_half_array),
+    .b_half_array(b_half_array),
+    .c_half_array(c_half_array),
+    .sel(sel),
+    .mux(mux_out)
+   );
+  integer i;
+  integer j;
 initial begin
- $display("out_a=%h\n",mux_out[0]);
- $strobe("asdf`=%h\n",mux_out[1]);
- $monitor("as=%h\n",mux_out[2]);
- $monitor("f=%h\n",mux_out[3]);
- $monitor("d=%h\n",mux_out[4]);
- // $monitor("f=%h\n",mux_out[5]);
-
- // $monitor("out_a=%h\n",im_memory);
- // $monitor("image=%h\n",im_memory);
- // $monitor("image=%h\n",im_memory);
-
+  $monitor("mux_out = %h",mux_out);
 end
+
 initial begin
-  $display("Loading rom.");
+  $write("Loading rom...");
   $readmemh("test_image.mem", im_memory);
+
+  for (i=0; i<15; i=i+1) begin
+    for (j=0; j<15; j=j+1) begin
+      integer_array[(8*i)+(j*8*15) +: 8] = im_memory[j][i];
+    end
+  end
+
+  //
+  // integer_array = {im_memory[14], im_memory[13], im_memory[12], im_memory[11], im_memory[10], im_memory[9], im_memory[8], im_memory[7],
+  //                  im_memory[6], im_memory[5], im_memory[4], im_memory[3], im_memory[2], im_memory[1], im_memory[0]};
+  $display("Done");
+
+
   clk = 0;
   reset = 1;
-  #1;
+  #10;
   reset = 0;
-  #1;
-  // mux_out = im_memory[0][0:14];
+  sel = 0;
+  #10;
+  sel = 1;
+  #10;
+  sel = 2;
+  #10;
+  sel = 16;
+  #10;
+  sel = 15;
+  #10;
 
 end
 
-assign mux_out[0] = im_memory[0][1];
-assign mux_out[1] = im_memory[1][1];
-assign mux_out[2] = im_memory[2][1];
-assign mux_out[3] = im_memory[3][1];
-assign mux_out[4] = im_memory[4][1];
-assign mux_out[5] = im_memory[5][1];
-assign mux_out[6] = im_memory[6][1];
 
 always
-  #5 clk = !clk;
-// $finish
+  #2 clk = !clk;
+
+initial begin
+  #1000000 $finish;
+end
+
+
+
 
 endmodule
 
