@@ -1,4 +1,4 @@
-`include "input_mux_2.v"
+`include "input_mux.v"
 
 module tb;
   reg clk, reset;
@@ -11,7 +11,7 @@ module tb;
   reg [959:0] c_half_array;
   wire [119:0] mux_out;
 
-  input_array_mux dut(
+  input_array_mux dut (
     .clock(clk),
     .reset(reset),
     .integer_array(integer_array),
