@@ -27,6 +27,7 @@ module subpixel_interpolation(clk,reset, in_buffer,
 
   /////////////////////////////
   wire [7:0] sel;
+  wire [7:0] val;
   wire [7:0] cnt;
   // new inputs from outputs of last cycle
   wire [959:0] temp_A;
@@ -37,6 +38,10 @@ module subpixel_interpolation(clk,reset, in_buffer,
   wire [959:0] any_out_A;
   wire [959:0] any_out_B;
   wire [959:0] any_out_C;
+
+  wire [63:0] fir_out_a;
+  wire [63:0] fir_out_b;
+  wire [63:0] fir_out_c;
 
   register #(.WIDTH(960)) A(clk, reset, 1'b0,out_A, temp_A);
 
@@ -54,14 +59,17 @@ module subpixel_interpolation(clk,reset, in_buffer,
   //     FIR_A filter_a(clk,reset, currentPixels[i*sizeofPixel +: 64], any_out_A[i*4sizeOfPixel +:8]);
   //   end
   // endgenerate
-  FIR_A filter_a1(clk,reset, currentPixels[0 +:64], any_out_A[0 +:8]);
-  FIR_A filter_a2(clk,reset, currentPixels[8 +:64], any_out_A[8 +:8]);
-  FIR_A filter_a3(clk,reset, currentPixels[16 +:64], any_out_A[16 +:8]);
-  FIR_A filter_a4(clk,reset, currentPixels[24 +:64], any_out_A[24 +:8]);
-  FIR_A filter_a5(clk,reset, currentPixels[32 +:64], any_out_A[32 +:8]);
-  FIR_A filter_a6(clk,reset, currentPixels[40 +:64], any_out_A[40 +:8]);
-  FIR_A filter_a7(clk,reset, currentPixels[48 +:64], any_out_A[48 +:8]);
-  FIR_A filter_a8(clk,reset, currentPixels[56 +:64], any_out_A[56 +:8]);
+  FIR_A filter_a1(clk,reset, currentPixels[0 +:64], fir_out_a[0 +:8]);
+  FIR_A filter_a2(clk,reset, currentPixels[8 +:64], fir_out_a[8 +:8]);
+  FIR_A filter_a3(clk,reset, currentPixels[16 +:64], fir_out_a[16 +:8]);
+  FIR_A filter_a4(clk,reset, currentPixels[24 +:64], fir_out_a[24 +:8]);
+  FIR_A filter_a5(clk,reset, currentPixels[32 +:64], fir_out_a[32 +:8]);
+  FIR_A filter_a6(clk,reset, currentPixels[40 +:64], fir_out_a[40 +:8]);
+  FIR_A filter_a7(clk,reset, currentPixels[48 +:64], fir_out_a[48 +:8]);
+  FIR_A filter_a8(clk,reset, currentPixels[56 +:64], fir_out_a[56 +:8]);
+
+  assign out_A[sel +: 64] = fir_out_a;
+
   // genvar j;
   //
   // generate
@@ -70,14 +78,14 @@ module subpixel_interpolation(clk,reset, in_buffer,
   //   end
   // endgenerate
   //
-  FIR_B filter_b1(clk,reset, currentPixels[0 +:64], any_out_B[0 +:8]);
-  FIR_B filter_b2(clk,reset, currentPixels[8 +:64], any_out_B[8 +:8]);
-  FIR_B filter_b3(clk,reset, currentPixels[16 +:64], any_out_B[16 +:8]);
-  FIR_B filter_b4(clk,reset, currentPixels[24 +:64], any_out_B[24 +:8]);
-  FIR_B filter_b5(clk,reset, currentPixels[32 +:64], any_out_B[32 +:8]);
-  FIR_B filter_b6(clk,reset, currentPixels[40 +:64], any_out_B[40 +:8]);
-  FIR_B filter_b7(clk,reset, currentPixels[48 +:64], any_out_B[48 +:8]);
-  FIR_B filter_b8(clk,reset, currentPixels[56 +:64], any_out_B[56 +:8]);
+  FIR_B filter_b1(clk,reset, currentPixels[0 +:64], fir_out_b[0 +:8]);
+  FIR_B filter_b2(clk,reset, currentPixels[8 +:64], fir_out_b[8 +:8]);
+  FIR_B filter_b3(clk,reset, currentPixels[16 +:64], fir_out_b[16 +:8]);
+  FIR_B filter_b4(clk,reset, currentPixels[24 +:64], fir_out_b[24 +:8]);
+  FIR_B filter_b5(clk,reset, currentPixels[32 +:64], fir_out_b[32 +:8]);
+  FIR_B filter_b6(clk,reset, currentPixels[40 +:64], fir_out_b[40 +:8]);
+  FIR_B filter_b7(clk,reset, currentPixels[48 +:64], fir_out_b[48 +:8]);
+  FIR_B filter_b8(clk,reset, currentPixels[56 +:64], fir_out_b[56 +:8]);
   // genvar k;
   // generate
   //   for (k = 0; k < 8 ; k++) begin : generate_filter_c
@@ -86,14 +94,14 @@ module subpixel_interpolation(clk,reset, in_buffer,
   // endgenerate
   //
 
-  FIR_C filter_c1(clk,reset, currentPixels[0 +:64], any_out_C[0 +:8]);
-  FIR_C filter_c2(clk,reset, currentPixels[8 +:64], any_out_C[8 +:8]);
-  FIR_C filter_c3(clk,reset, currentPixels[16 +:64], any_out_C[16 +:8]);
-  FIR_C filter_c4(clk,reset, currentPixels[24 +:64], any_out_C[24 +:8]);
-  FIR_C filter_c5(clk,reset, currentPixels[32 +:64], any_out_C[32 +:8]);
-  FIR_C filter_c6(clk,reset, currentPixels[40 +:64], any_out_C[40 +:8]);
-  FIR_C filter_c7(clk,reset, currentPixels[48 +:64], any_out_C[48 +:8]);
-  FIR_C filter_c8(clk,reset, currentPixels[56 +:64], any_out_C[56 +:8]);
+  FIR_C filter_c1(clk,reset, currentPixels[0 +:64], fir_out_c[0 +:8]);
+  FIR_C filter_c2(clk,reset, currentPixels[8 +:64], fir_out_c[8 +:8]);
+  FIR_C filter_c3(clk,reset, currentPixels[16 +:64], fir_out_c[16 +:8]);
+  FIR_C filter_c4(clk,reset, currentPixels[24 +:64], fir_out_c[24 +:8]);
+  FIR_C filter_c5(clk,reset, currentPixels[32 +:64], fir_out_c[32 +:8]);
+  FIR_C filter_c6(clk,reset, currentPixels[40 +:64], fir_out_c[40 +:8]);
+  FIR_C filter_c7(clk,reset, currentPixels[48 +:64], fir_out_c[48 +:8]);
+  FIR_C filter_c8(clk,reset, currentPixels[56 +:64], fir_out_c[56 +:8]);
 
   assign out_A = any_out_A;
   assign out_B = any_out_B;
