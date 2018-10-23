@@ -15,6 +15,4 @@ def hex_matrix(start_value, rand=False, D=15):
 
 
 print hex_matrix(31, True)
-print hex_matrix(13)
-
-
+# print hex_matrix(13)

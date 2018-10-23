@@ -1,9 +1,8 @@
-`include "input_mux_2.v"
+`include "input_mux.v"
 
 /**********************
  *
  * subpixel_interpolation - top-level module that interpolates a array of subpixels
- *
  *
  **********************/
 

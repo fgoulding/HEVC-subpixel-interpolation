@@ -29,7 +29,7 @@ end
 
 initial begin
   $write("Loading rom...");
-  $readmemh("test_image.mem", im_memory);
+  $readmemh("test_image_2.mem", im_memory);
 
   for (i=0; i<15; i=i+1) begin
     for (j=0; j<15; j=j+1) begin
