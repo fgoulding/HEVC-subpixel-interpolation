@@ -1,17 +1,17 @@
-module FIR_A(clock, reset, inputPixels, subPixel);
+module FIR_A(clock, reset_L, inputPixels, subPixel);
 
   input [63:0] inputPixels; // flattened input pixels
   input clock;
-  input reset;
+  input reset_L;
   output [7:0] subPixel;
   reg [7:0] subPixel;
   parameter c1 = -1; parameter c2 = 4; parameter c3 = -10;
   parameter c4 = 58; parameter c5 = 17; parameter c6 = -5;
   parameter c7 = 1;
 
-  always @(posedge clock or posedge reset)
+  always @(posedge clock)
   begin
-    if(reset)
+    if(!reset_L)
       begin
         subPixel = 8'b0;
       end
@@ -24,9 +24,9 @@ module FIR_A(clock, reset, inputPixels, subPixel);
 
 endmodule
 
-module FIR_B( clock, reset, inputPixels, subPixel);
+module FIR_B( clock, reset_L, inputPixels, subPixel);
   input clock;
-  input reset;
+  input reset_L;
   input [63:0] inputPixels; // flattened input pixels
   output [7:0] subPixel;
   reg [7:0] subPixel;
@@ -34,9 +34,9 @@ module FIR_B( clock, reset, inputPixels, subPixel);
   parameter c4 = 40; parameter c5 = 40; parameter c6 = -11;
   parameter c7 = 4 ; parameter c8 = -1;
 
-  always @(posedge clock or posedge reset)
+  always @(posedge clock)
   begin
-    if(reset)
+    if(!reset_L)
       begin
         subPixel = 8'b0;
       end
@@ -49,9 +49,9 @@ module FIR_B( clock, reset, inputPixels, subPixel);
 
 endmodule
 
-module FIR_C(clock, reset, inputPixels, subPixel);
+module FIR_C(clock, reset_L, inputPixels, subPixel);
   input clock;
-  input reset;
+  input reset_L;
   input [63:0] inputPixels; // flattened input pixels
   output [7:0] subPixel;
   reg [7:0] subPixel;
@@ -59,9 +59,9 @@ module FIR_C(clock, reset, inputPixels, subPixel);
   parameter c4 = 58; parameter c5 = -10; parameter c6 = 4;
   parameter c7 = -1;
 
-  always @(posedge clock or posedge reset)
+  always @(posedge clock)
   begin
-    if(reset)
+    if(!reset_L)
       begin
         subPixel = 8'b0;
       end

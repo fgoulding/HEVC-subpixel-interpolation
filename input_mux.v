@@ -25,6 +25,10 @@ module  input_array_mux(
 
   wire [7:0] val;
   wire  [119:0] in_buffer [0:14]; //for (4+7)*(4+7) interpolation
+  wire  [119:0] in_half_A_buffer [0:8]; //for (4+7)*(4+7) interpolation
+  wire  [119:0] in_half_B_buffer [0:8]; //for (4+7)*(4+7) interpolation
+  wire  [119:0] in_half_C_buffer [0:8]; //for (4+7)*(4+7) interpolation
+
   parameter integer_rows = num_pixel+7;
   parameter integer_cols = (num_pixel+7)*2;
   parameter half_a_cols = integer_cols + num_pixel;
@@ -34,6 +38,14 @@ module  input_array_mux(
   assign {in_buffer[14],in_buffer[13],in_buffer[12],in_buffer[11],in_buffer[10],
           in_buffer[9],in_buffer[8],in_buffer[7],in_buffer[6],in_buffer[5],
           in_buffer[4],in_buffer[3],in_buffer[2],in_buffer[1],in_buffer[0]} = integer_array;
+
+  assign {in_half_A_buffer[7],in_half_A_buffer[6],in_half_A_buffer[5],in_half_A_buffer[4],
+          in_half_A_buffer[3],in_half_A_buffer[2],in_half_A_buffer[1],in_half_A_buffer[0]} = a_half_array;
+  assign {in_half_B_buffer[7],in_half_B_buffer[6],in_half_B_buffer[5],in_half_B_buffer[4],
+          in_half_B_buffer[3],in_half_B_buffer[2],in_half_B_buffer[1],in_half_B_buffer[0]} = b_half_array;
+  assign {in_half_C_buffer[7],in_half_C_buffer[6],in_half_C_buffer[5],in_half_C_buffer[4],
+          in_half_C_buffer[3],in_half_C_buffer[2],in_half_C_buffer[1],in_half_C_buffer[0]} = c_half_array;
+
   assign val = (sel-integer_rows)*8;
 
   always @(posedge clock or posedge reset)
@@ -44,7 +56,6 @@ module  input_array_mux(
       mux <= in_buffer[sel];
     end
     else if (sel < integer_cols) begin
-
       mux[7:0] <= in_buffer[0][val +: 8];
       mux[15:8] <= in_buffer[1][val +: 8]; //or transpose
       mux[23:16] <= in_buffer[2][val +: 8];
@@ -60,14 +71,14 @@ module  input_array_mux(
       mux[103:96] <= in_buffer[12][val +: 8];
       mux[111:104] <= in_buffer[13][val +: 8];
       mux[119:112] <= in_buffer[14][val +: 8];
+
+    end else if (sel < half_a_cols) begin
+      mux <= in_half_A_buffer[sel-integer_cols];
+    end else if (sel < half_b_cols) begin
+      mux <= in_half_B_buffer[sel-half_a_cols];
+    end else if (sel < half_c_cols) begin
+      mux <= in_half_C_buffer[sel-half_b_cols];
     end
-    // end else if (sel < half_a_cols) begin
-    //   mux <= half_a_array[sel];
-    // end else if (sel < half_b_cols) begin
-    //   mux <= half_b_array[sel*PIXEL_SIZE : (sel+15)*PIXEL_SIZE];;
-    // end else if (sel < half_c_cols) begin
-    //   mux <= half_c_array[sel*PIXEL_SIZE : (sel+15)*PIXEL_SIZE];;
-    // end
     else begin
       mux <= 15'b0;
     end

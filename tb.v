@@ -6,24 +6,81 @@ module tb;
   reg [7:0] sel;
   reg [7:0] im_memory [0:14][0:14];
   reg [1799:0] integer_array;
-  wire [959:0] A;
-  wire [959:0] B;
-  wire [959:0] C;
-  wire [511:0] out_b;
+  wire [2559:0] A;
+  wire [2559:0] B;
+  wire [2559:0] C;
+  wire [63:0] fir_out_a;
+  wire [63:0] fir_out_b;
+  wire [63:0] fir_out_c;
+
+  wire [7:0] cnt;
 
   subpixel_interpolation dut(
     .clk(clk),
-    .reset(reset),
+    .rst(reset),
     .in_buffer(integer_array),
     .out_A(A),
     .out_B(B),
     .out_C(C),
-    .out_buffer(out_b));
+    .cnt(cnt),
+    .fir_out_a(fir_out_a),
+    .fir_out_b(fir_out_b),
+    .fir_out_c(fir_out_c)
+    );
 
   integer i;
   integer j;
 initial begin
-  $monitor("mux_out = %h",A);
+  $monitor({"cnt:%h ---\n A: \n %h\n %h\n %h\n %h\n %h\n%h\n%h\n%h\n ------\n",
+  "D: \n %h\n %h\n %h\n %h\n %h\n%h\n%h\n%h\n ------\n",
+  "E: \n %h\n %h\n %h\n %h\n %h\n%h\n%h\n%h\n ------\n",
+  "F: \n %h\n %h\n %h\n %h\n %h\n%h\n%h\n%h\n ------\n",
+  "G: \n %h\n %h\n %h\n %h\n %h\n%h\n%h\n%h\n ------\n\n"},
+  cnt,
+  A[63:0],
+  A[127:64],
+  A[191:128],
+  A[255:192],
+  A[319:256],
+  A[383:320],
+  A[447:384],
+  A[511:448],
+  A[575:512],
+  A[639:576],
+  A[703:640],
+  A[767:704],
+  A[831:768],
+  A[895:832],
+  A[959:896],
+  A[1023:960],
+  A[1087:1024],
+  A[1151:1088],
+  A[1215:1152],
+  A[1279:1216],
+  A[1343:1280],
+  A[1407:1344],
+  A[1471:1408],
+  A[1535:1472],
+  A[1599:1536],
+  A[1663:1600],
+  A[1727:1664],
+  A[1791:1728],
+  A[1855:1792],
+  A[1919:1856],
+  A[1983:1920],
+  A[2047:1984],
+  A[2111:2048],
+  A[2175:2112],
+  A[2239:2176],
+  A[2303:2240],
+  A[2367:2304],
+  A[2431:2368],
+  A[2495:2432],
+  A[2559:2496]);
+  $monitor({"cnt:%h---\n firA: \n %h %h %h %h %h %h %h %h\n ------\n"},
+  cnt,
+  fir_out_a[7:0],fir_out_a[15:8],fir_out_a[23:16],fir_out_a[31:24],
+  fir_out_a[39:32],fir_out_a[47:40], fir_out_a[55:48], fir_out_a[63:56]);
 end
 
 initial begin
@@ -43,63 +100,23 @@ initial begin
 
 
   clk = 0;
-  reset = 1;
-  #10;
   reset = 0;
-  // sel = 0;
-  // #10;
-  // sel = 1;
-  // #10;
-  // sel = 2;
-  // #10;
-  // sel = 16;
-  // #10;
-  // sel = 15;
-  // #10;
+  #10;
+  // reset = 1;
+  #100;
+  reset = 1;
 
 end
 
 
 always
-  #2 clk = !clk;
+  #50 clk = !clk;
 
 initial begin
-  #1000000 $finish;
+  #3500 $finish;
 end
 
 
 
 
 endmodule
-
-
-// module tb;
-//     reg clk, reset;
-//   reg [55:0] inputPixels;
-//   wire [7:0] subPixel;
-
-//     FIR_A dut(inputPixels,subPixel,clk,reset);
-
-// initial begin
-//   $monitor("monitor subpixel:%h", subPixel);
-//   clk = 0;
-//   reset = 1;
-//   #1;
-//   reset = 0;
-//   #1
-//   inputPixels[7:0] = 8'b0;
-//   inputPixels[15:8] = 8'b1;
-//   inputPixels[23:16] = 8'b10;
-//   inputPixels[31:24] = 8'b11;
-//   inputPixels[39:32] = 8'b101;
-//   inputPixels[47:40] = 8'b00000111;
-//   inputPixels[55:48] = 8'b100;
-//   #5;
-
-// end
-
-// always
-//   #5 clk = !clk;
-// // /$finish
-
-// endmodule

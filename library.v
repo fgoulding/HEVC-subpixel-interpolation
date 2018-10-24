@@ -19,24 +19,24 @@ module register (
    output reg [WIDTH-1:0] out;
 
    always @ (posedge clock, negedge reset_L) begin
-      if(~reset_L)
+      if(!reset_L)
          out <= 'h0000;
       else if (~load_L)
          out <= in;
    end
 endmodule
 
-module counter (clk, reset, cnt);
+module counter (clk, reset_L, cnt);
   input		clk;
-  input		reset;
+  input		reset_L;
   output	[7:0]	cnt;
   reg	[7:0]	cnt;
 
   always @(posedge clk)
-    if (!reset)
-      cnt = cnt + 1;
-    else
+    if (!reset_L)
       cnt = 0;
+    else
+      cnt = cnt + 1;
 
 endmodule
 
@@ -55,7 +55,7 @@ module shift_reg (clock, reset_L, load_L, in, out);
   reg [119:0] regi_t [7:0];
 
   always @(posedge clock) begin
-    if (~reset_L) begin
+    if (!reset_L) begin
       for(i=0;i<15;i=i+1) begin
         regi[i] <= 64'b0;
       end
@@ -92,7 +92,7 @@ module output_filler(clock, reset_L, load_L, sel, in, out);
   reg [63:0] regi [39:0]; //8*8 by 8*5
 
   always @(posedge clock) begin
-    if (reset_L) begin
+    if (!reset_L) begin
       for(i=0;i<40;i=i+1) begin
         regi[i] <= 64'b0;
       end
