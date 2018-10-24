@@ -1,4 +1,5 @@
 `include "input_mux.v"
+`include "fir.v"
 
 /**********************
  *
@@ -6,12 +7,12 @@
  *
  **********************/
 
-module subpixel_interpolation(clk,reset, in_buffer,
+module subpixel_interpolation(clk,rst, in_buffer,
                               out_A, out_B, out_C, out_buffer);
   parameter num_pixel = 8;
   parameter sizeofPixel = 8;
   input clk;
-  input reset;
+  input rst;
   input  [1799:0] in_buffer; //for (4+7)*(4+7) interpolation
   output [959:0] out_A; //feedback buffer
   output [959:0] out_B; //feedback buffer
@@ -43,14 +44,17 @@ module subpixel_interpolation(clk,reset, in_buffer,
   wire [63:0] fir_out_b;
   wire [63:0] fir_out_c;
 
-  register #(.WIDTH(960)) A(clk, reset, 1'b0,out_A, temp_A);
+  /*
+   * registers to hold the horizontal half pixels
+   */
+  // register #(.WIDTH(960)) A(clk, reset, 1'b0,out_A, temp_A);
+  // register #(.WIDTH(960)) B(clk, reset, 1'b0,out_B, temp_B);
+  // register #(.WIDTH(960)) C(clk, reset, 1'b0,out_C, temp_C);
 
-  register #(.WIDTH(960)) B(clk, reset, 1'b0,out_B, temp_B);
-  register #(.WIDTH(960)) C(clk, reset, 1'b0,out_C, temp_C);
+
   counter pc(clk, reset, cnt);
   register #(.WIDTH(8)) select(clk, reset, 1'b0, cnt, sel);
 
-  // row_select sel_modulo(clk, reset, sel, row); //select which row based on some modulo of counter (sel)
   input_array_mux input_mux(clk,reset,in_buffer, temp_A, temp_B, temp_C, sel, currentPixels);
 
   // genvar i;
@@ -68,7 +72,7 @@ module subpixel_interpolation(clk,reset, in_buffer,
   FIR_A filter_a7(clk,reset, currentPixels[48 +:64], fir_out_a[48 +:8]);
   FIR_A filter_a8(clk,reset, currentPixels[56 +:64], fir_out_a[56 +:8]);
 
-  assign out_A[sel +: 64] = fir_out_a;
+  // assign out_A[sel +: 64] = fir_out_a;
 
   // genvar j;
   //
@@ -103,88 +107,18 @@ module subpixel_interpolation(clk,reset, in_buffer,
   FIR_C filter_c7(clk,reset, currentPixels[48 +:64], fir_out_c[48 +:8]);
   FIR_C filter_c8(clk,reset, currentPixels[56 +:64], fir_out_c[56 +:8]);
 
+  assign load_L = ~(cnt<(num_pixel+7));
+
+  shift_reg sr_A(clock, reset, load_L, fir_out_a , temp_A);
+  shift_reg sr_B(clock, reset, load_L, fir_out_b , temp_B);
+  shift_reg sr_C(clock, reset, load_L, fir_out_c , temp_C);
+
   assign out_A = any_out_A;
   assign out_B = any_out_B;
   assign out_C = any_out_C;
 
   // // outputMux(any_out_A,any_out_B,any_out_C, temp_A, temp_B, temp_C,
   //           // sel, clk, reset, out_A, out_B, outr_C, out_buffer);
-
-endmodule
-
-module FIR_A(clock, reset, inputPixels, subPixel);
-
-  input [63:0] inputPixels; // flattened input pixels
-  input clock;
-  input reset;
-  output [7:0] subPixel;
-  reg [7:0] subPixel;
-  parameter c1 = -1; parameter c2 = 4; parameter c3 = -10;
-  parameter c4 = 58; parameter c5 = 17; parameter c6 = -5;
-  parameter c7 = 1;
-
-  always @(posedge clock or posedge reset)
-  begin
-    if(reset)
-      begin
-        subPixel = 8'b0;
-      end
-    else
-      begin
-        subPixel = (c1*inputPixels[7:0] + c2*inputPixels[15:8] + c3*inputPixels[23:16] + c4*inputPixels[31:24] +
-                    c5*inputPixels[39:32] + c6*inputPixels[47:40] + c7*inputPixels[55:48])/64;
-      end
-  end
-
-endmodule
-
-module FIR_B( clock, reset, inputPixels, subPixel);
-  input clock;
-  input reset;
-  input [63:0] inputPixels; // flattened input pixels
-  output [7:0] subPixel;
-  reg [7:0] subPixel;
-  parameter c1 = -1; parameter c2 = 4; parameter c3 = -11;
-  parameter c4 = 40; parameter c5 = 40; parameter c6 = -11;
-  parameter c7 = 4 ; parameter c8 = -1;
-
-  always @(posedge clock or posedge reset)
-  begin
-    if(reset)
-      begin
-        subPixel = 8'b0;
-      end
-    else
-      begin
-				subPixel = (c1*inputPixels[7:0] + c2*inputPixels[15:8] + c3*inputPixels[23:16] + c4*inputPixels[31:24] +
-                    c5*inputPixels[39:32] + c6*inputPixels[47:40] + c7*inputPixels[55:48] + c8*inputPixels[63:56])/64;
-      end
-  end
-
-endmodule
-
-module FIR_C(clock, reset, inputPixels, subPixel);
-  input clock;
-  input reset;
-  input [63:0] inputPixels; // flattened input pixels
-  output [7:0] subPixel;
-  reg [7:0] subPixel;
-  parameter c1 =  1; parameter c2 = -5; parameter c3 = 17;
-  parameter c4 = 58; parameter c5 = -10; parameter c6 = 4;
-  parameter c7 = -1;
-
-  always @(posedge clock or posedge reset)
-  begin
-    if(reset)
-      begin
-        subPixel = 8'b0;
-      end
-    else
-      begin
-				subPixel = (c1*inputPixels[7:0] + c2*inputPixels[15:8] + c3*inputPixels[23:16] + c4*inputPixels[31:24] +
-                    c5*inputPixels[39:32] + c6*inputPixels[47:40] + c7*inputPixels[55:48])/64;
-      end
-  end
 
 endmodule
 
@@ -227,6 +161,63 @@ module counter (clk, reset, cnt);
       cnt = cnt + 1;
     else
       cnt = 0;
+
+endmodule
+
+// module redirect (clk, reset, in, sel,out);
+//   input		clk;
+//   input		reset;
+//   input [63:0] in;
+//   input [7:0] sel;
+//   output [959:0]	out;
+//
+//   reg [959:0] out;
+//   parameter [7:0] val;
+//
+//   always
+//   always @(posedge clk)
+//     if (reset)
+//       out <= 960'b0
+//     else if (sel ) begin
+//
+//     end
+//
+// endmodule
+
+/*
+ *
+ */
+module shift_reg (clock, reset_L, load_L, in, out);
+  input		clock;
+  input		reset_L;
+  input load_L;
+  input [63:0] in;
+  output reg [959:0]	out;
+  integer i=0;
+  integer j=0;
+  reg [63:0] regi [14:0];
+  reg [119:0] regi_t [7:0];
+
+  always @(posedge clock) begin
+    if (reset_L) begin
+      for(i=0;i<15;i=i+1) begin
+        regi[i] <= 64'b0;
+      end
+    end
+    else if (~load_L) begin
+      //byte shift register
+      for( i=1;i<15;i=i+1) begin
+        regi[i] <= regi[i-1];
+      end
+      regi[0] <= in;
+    end
+    for(i=0;i<15;i=i+1) begin
+      for (j=0;j<8;j=j+1) begin
+        regi_t[j][i*8] = regi[i][j*8];
+      end
+    end
+    out = {regi_t[7],regi_t[6],regi_t[5],regi_t[4],regi_t[3],regi_t[2],regi_t[1],regi_t[0]};
+  end
 
 endmodule
 
