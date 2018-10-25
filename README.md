@@ -1,37 +1,18 @@
-## Welcome to GitHub Pages
+# Sub-pixel Interpolation
 
-You can use the [editor on GitHub](https://github.com/tylerGoulding/HEVC-subpixel-interpolation/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+The increasing demand for high-resolution digital video for many different types of applications stimulated the efforts to improve the performance in video coding. As a result, HEVC,a video compression/encoding algorithm, was developed to reduce code rate of the video streaming to 50% of H.264 standard. However, the standard is very computationally expensive. The most computationally intensive portion is the sub-pixel interpolation. 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Video encoders have different modules to explore each redundancy type present in visual information. HEVC interpolation filter is a finite impulse response (FIR) filter to interpolate subpixels using the surrounding pixels and subpixels to decide the current value. 
 
-### Markdown
+### Vanilla Implementation
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+First we will implement a standard hardware version of the algorithm define in the HEVC standard for sub-pixel interpolation. There will be natural design decisions that will inherently differ from a software implementation, but we will take no steps to optimize for power/area/performance.
 
-```markdown
-Syntax highlighted code block
+### Improving the Implementation
 
-# Header 1
-## Header 2
-### Header 3
+We will use approximate computing techniques to improve power consumption. We will then analyze accuracy and performance vs power consumption.
 
-- Bulleted
-- List
 
-1. Numbered
-2. List
+## October 24 Update
 
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/tylerGoulding/HEVC-subpixel-interpolation/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+We have developed a vanilla implementation of sub-pixel interpolation in Verilog. The hardware design uses a series of basic fir filters to execute all sub-pixels related to a single row in a 1 clock cycle. So each clock cycle, 24 sub pixels are calculated. 
