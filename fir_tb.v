@@ -64,9 +64,11 @@ end
 always
   #2 clk = !clk;
 
-initial begin
-  #1000000 $finish;
-end
+
+  initial begin
+    #3500 $finish;
+  end
+
 
 
 

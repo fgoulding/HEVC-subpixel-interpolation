@@ -11,7 +11,7 @@
 module subpixel_interpolation(clk,rst, in_buffer,
                               out_A, out_B, out_C,cnt,fir_out_a,
                             fir_out_b,
-                            fir_out_c);
+                            fir_out_c,temp_A, temp_B,temp_C, load_out, sel,currentPixels);
   parameter num_pixel = 8;
   parameter sizeofPixel = 8;
   input clk;
@@ -24,14 +24,24 @@ module subpixel_interpolation(clk,rst, in_buffer,
   output [63:0] fir_out_a;
   output [63:0] fir_out_b;
   output [63:0] fir_out_c;
+  output [959:0] temp_A;
+  output [959:0] temp_B;
+  output [959:0] temp_C;
+  output load_out;
+  output [7:0] sel;
   // reg [959:0] out_A; //feedback buffer
   // reg [959:0] out_B; //feedback buffer
   // reg [959:0] out_C; //feedback buffer
   /////////////////////////////
+  output [119:0] currentPixels;
+
   wire [119:0] currentPixels;
 
   /////////////////////////////
   wire [7:0] sel;
+  wire [7:0] sel2;
+  wire [7:0] s;
+  wire [7:0] so;
   wire [7:0] val;
   wire [7:0] cnt;
   // new inputs from outputs of last cycle
@@ -46,8 +56,9 @@ module subpixel_interpolation(clk,rst, in_buffer,
 
   counter pc(clk, rst, cnt);
   register #(.WIDTH(8)) select(clk, rst, 1'b0, cnt, sel);
+  register #(.WIDTH(8)) select2(clk, rst, 1'b0, sel, sel2);
 
-  input_array_mux input_mux(clk,rst,in_buffer, temp_A, temp_B, temp_C, cnt, currentPixels);
+  input_array_mux input_mux(clk,rst,cnt,s,in_buffer, temp_A, temp_B, temp_C, cnt, currentPixels);
 
   // genvar i;
   // generate
@@ -55,14 +66,14 @@ module subpixel_interpolation(clk,rst, in_buffer,
   //     FIR_A filter_a(clk,rst, currentPixels[i*sizeofPixel +: 64], any_out_A[i*4sizeOfPixel +:8]);
   //   end
   // endgenerate
-  FIR_A filter_a1(clk,rst, currentPixels[0 +:64], fir_out_a[0 +:8]);
-  FIR_A filter_a2(clk,rst, currentPixels[8 +:64], fir_out_a[8 +:8]);
-  FIR_A filter_a3(clk,rst, currentPixels[16 +:64], fir_out_a[16 +:8]);
-  FIR_A filter_a4(clk,rst, currentPixels[24 +:64], fir_out_a[24 +:8]);
-  FIR_A filter_a5(clk,rst, currentPixels[32 +:64], fir_out_a[32 +:8]);
-  FIR_A filter_a6(clk,rst, currentPixels[40 +:64], fir_out_a[40 +:8]);
-  FIR_A filter_a7(clk,rst, currentPixels[48 +:64], fir_out_a[48 +:8]);
-  FIR_A filter_a8(clk,rst, currentPixels[56 +:64], fir_out_a[56 +:8]);
+  FIR_A filter_a1(clk,rst,s, so, currentPixels[0 +:64], fir_out_a[0 +:8]);
+  FIR_A filter_a2(clk,rst,s, so, currentPixels[8 +:64], fir_out_a[8 +:8]);
+  FIR_A filter_a3(clk,rst,s, so, currentPixels[16 +:64], fir_out_a[16 +:8]);
+  FIR_A filter_a4(clk,rst,s, so, currentPixels[24 +:64], fir_out_a[24 +:8]);
+  FIR_A filter_a5(clk,rst,s, so, currentPixels[32 +:64], fir_out_a[32 +:8]);
+  FIR_A filter_a6(clk,rst,s, so, currentPixels[40 +:64], fir_out_a[40 +:8]);
+  FIR_A filter_a7(clk,rst,s, so, currentPixels[48 +:64], fir_out_a[48 +:8]);
+  FIR_A filter_a8(clk,rst,s, so, currentPixels[56 +:64], fir_out_a[56 +:8]);
 
   // assign out_A[sel +: 64] = fir_out_a;
 
@@ -99,18 +110,18 @@ module subpixel_interpolation(clk,rst, in_buffer,
   FIR_C filter_c7(clk,rst, currentPixels[48 +:64], fir_out_c[48 +:8]);
   FIR_C filter_c8(clk,rst, currentPixels[56 +:64], fir_out_c[56 +:8]);
 
-  assign load_L = ~(cnt<(num_pixel+7));
+  assign load_L = !(so<(num_pixel+8));
 
   /*
    * registers to hold the horizontal half pixels
    */
-  shift_reg sr_A(clock, rst, load_L, fir_out_a , temp_A);
-  shift_reg sr_B(clock, rst, load_L, fir_out_b , temp_B);
-  shift_reg sr_C(clock, rst, load_L, fir_out_c , temp_C);
+  shift_reg sr_A(clk, rst, load_L, fir_out_a , temp_A);
+  shift_reg sr_B(clk, rst, load_L, fir_out_b , temp_B);
+  shift_reg sr_C(clk, rst, load_L, fir_out_c , temp_C);
 
-  assign load_out = ~((sel > 2) && (sel < 11)) || ((sel > 14) && (sel < 47));
-  output_filler filler_a(clock, rst, load_L, sel, fir_out_a, out_A);
-  output_filler filler_b(clock, rst, load_L, sel, fir_out_b, out_B);
-  output_filler filler_c(clock, rst, load_L, sel, fir_out_c, out_C);
+  assign load_out = !(((so > 2) && (so < 12)) || ((so > 14) && (so < 48)));
+  output_filler filler_a(clk, rst, load_out, sel, fir_out_a, out_A);
+  output_filler filler_b(clk, rst, load_out, sel, fir_out_b, out_B);
+  output_filler filler_c(clk, rst, load_out, sel, fir_out_c, out_C);
 
 endmodule

@@ -3,7 +3,7 @@
 module tb;
   reg clk, reset;
   reg [55:0] inputPixels;
-  reg [7:0] sel;
+  // reg [7:0] sel;
   reg [7:0] im_memory [0:14][0:14];
   reg [1799:0] integer_array;
   wire [2559:0] A;
@@ -12,8 +12,13 @@ module tb;
   wire [63:0] fir_out_a;
   wire [63:0] fir_out_b;
   wire [63:0] fir_out_c;
-
+  wire [959:0] temp_A;
+  wire [959:0] temp_B;
+  wire [959:0] temp_C;
   wire [7:0] cnt;
+  wire load_out;
+  wire [7:0] sel;
+  wire [119:0] currentPixels;
 
   subpixel_interpolation dut(
     .clk(clk),
@@ -25,18 +30,24 @@ module tb;
     .cnt(cnt),
     .fir_out_a(fir_out_a),
     .fir_out_b(fir_out_b),
-    .fir_out_c(fir_out_c)
+    .fir_out_c(fir_out_c),
+    .temp_A(temp_A),
+    .temp_B(temp_B),
+    .temp_C(temp_C),
+    .load_out(load_out),
+    .sel(sel),
+    .currentPixels(currentPixels)
     );
 
   integer i;
   integer j;
 initial begin
-  $monitor({"cnt:%h ---\n A: \n %h\n %h\n %h\n %h\n %h\n%h\n%h\n%h\n ------\n",
-  "D: \n %h\n %h\n %h\n %h\n %h\n%h\n%h\n%h\n ------\n",
-  "E: \n %h\n %h\n %h\n %h\n %h\n%h\n%h\n%h\n ------\n",
-  "F: \n %h\n %h\n %h\n %h\n %h\n%h\n%h\n%h\n ------\n",
-  "G: \n %h\n %h\n %h\n %h\n %h\n%h\n%h\n%h\n ------\n\n"},
-  cnt,
+  $monitor({"reset:%h cnt:%h loadOut:%h sel:%h ---\n A: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n",
+  "D: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n",
+  "E: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n",
+  "F: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n",
+  "G: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n\n"},
+  reset,cnt, load_out, sel,
   A[63:0],
   A[127:64],
   A[191:128],
@@ -77,10 +88,12 @@ initial begin
   A[2431:2368],
   A[2495:2432],
   A[2559:2496]);
-  $monitor({"cnt:%h---\n firA: \n %h %h %h %h %h %h %h %h\n ------\n"},
-  cnt,
-  fir_out_a[7:0],fir_out_a[15:8],fir_out_a[23:16],fir_out_a[31:24],
-  fir_out_a[39:32],fir_out_a[47:40], fir_out_a[55:48], fir_out_a[63:56]);
+  // $monitor({"cnt:%h---\n currentPixels: %h firA: \n %h %h %h %h %h %h %h %h\n ------\n",
+  // "%h\n"},
+  // cnt, currentPixels,
+  // fir_out_a[7:0],fir_out_a[15:8],fir_out_a[23:16],fir_out_a[31:24],
+  // fir_out_a[39:32],fir_out_a[47:40], fir_out_a[55:48], fir_out_a[63:56],
+  // temp_A);
 end
 
 initial begin
@@ -97,23 +110,19 @@ initial begin
   // integer_array = {im_memory[14], im_memory[13], im_memory[12], im_memory[11], im_memory[10], im_memory[9], im_memory[8], im_memory[7],
   //                  im_memory[6], im_memory[5], im_memory[4], im_memory[3], im_memory[2], im_memory[1], im_memory[0]};
   $display("Done");
-
-
   clk = 0;
   reset = 0;
-  #10;
-  // reset = 1;
-  #100;
+  #110;
   reset = 1;
 
 end
 
 
 always
-  #50 clk = !clk;
+  #100 clk = !clk;
 
 initial begin
-  #3500 $finish;
+  #5000 $finish;
 end
 
 

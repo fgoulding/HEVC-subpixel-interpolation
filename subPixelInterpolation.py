@@ -67,8 +67,11 @@ def subPixelInterpolate(image_array):
         outputA += [(subA)]
         outputB += [(subB)]
         outputC += [(subC)]
+    outputA = outputA[3:11]
+    outputB = outputB[3:11]
+    outputC = outputC[3:11]
     for image_col in zip(*image_array)[3:11]:
-        # print image_col
+        print map(hex,image_col)
         subA = FIR_A(image_col,8);
         subB = FIR_B(image_col,8);
         subC = FIR_C(image_col,8);
@@ -85,7 +88,7 @@ def subPixelInterpolate(image_array):
     for image_col in zip(*B):
         subA = FIR_A(image_col,8);
         subB = FIR_B(image_col,8);
-        # subC = FIR_C(image_col,8);
+        subC = FIR_C(image_col,8);
         outputA += [(subA)]
         outputB += [(subB)]
         outputC += [(subC)]

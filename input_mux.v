@@ -3,6 +3,8 @@
 module  input_array_mux(
   clock,
   reset,
+  s,
+  so,
   integer_array,
   a_half_array,
   b_half_array,
@@ -14,6 +16,8 @@ module  input_array_mux(
   parameter num_pixel = 8;
   input clock;
   input reset;
+  input [7:0] s;
+  output reg [7:0] so;
   input [1799:0] integer_array;
   input [959:0] a_half_array;
   input [959:0] b_half_array;
@@ -30,7 +34,7 @@ module  input_array_mux(
   wire  [119:0] in_half_C_buffer [0:8]; //for (4+7)*(4+7) interpolation
 
   parameter integer_rows = num_pixel+7;
-  parameter integer_cols = (num_pixel+7)*2;
+  parameter integer_cols = integer_rows+8;
   parameter half_a_cols = integer_cols + num_pixel;
   parameter half_b_cols = integer_cols + num_pixel*2;
   parameter half_c_cols = integer_cols + num_pixel*3;
@@ -46,10 +50,11 @@ module  input_array_mux(
   assign {in_half_C_buffer[7],in_half_C_buffer[6],in_half_C_buffer[5],in_half_C_buffer[4],
           in_half_C_buffer[3],in_half_C_buffer[2],in_half_C_buffer[1],in_half_C_buffer[0]} = c_half_array;
 
-  assign val = (sel-integer_rows)*8;
+  assign val = (sel-integer_rows+3)*8;
 
-  always @(posedge clock or posedge reset)
+  always @(posedge clock)
  	begin: MUX
+    so = s;
     if (sel < integer_rows) begin
       //select row from integer_array
       //use case to select row? or just pass an input row somehow?
@@ -57,7 +62,7 @@ module  input_array_mux(
     end
     else if (sel < integer_cols) begin
       mux[7:0] <= in_buffer[0][val +: 8];
-      mux[15:8] <= in_buffer[1][val +: 8]; //or transpose
+      mux[15:8] <= in_buffer[1][val +: 8];
       mux[23:16] <= in_buffer[2][val +: 8];
       mux[31:24] <= in_buffer[3][val +: 8];
       mux[39:32] <= in_buffer[4][val +: 8];
