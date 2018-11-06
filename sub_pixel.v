@@ -119,7 +119,7 @@ module subpixel_interpolation(clk,rst, in_buffer,
   shift_reg sr_B(clk, rst, load_L, fir_out_b , temp_B);
   shift_reg sr_C(clk, rst, load_L, fir_out_c , temp_C);
 
-  assign load_out = !(((so > 2) && (so < 12)) || ((so > 14) && (so < 48)));
+  assign load_out = !(((so > 2) && (so < 11)) || ((so > 15) && (so < 48)));
   output_filler filler_a(clk, rst, load_out, sel, fir_out_a, out_A);
   output_filler filler_b(clk, rst, load_out, sel, fir_out_b, out_B);
   output_filler filler_c(clk, rst, load_out, sel, fir_out_c, out_C);

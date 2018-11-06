@@ -1,5 +1,7 @@
 from pprint import pprint
 
+# 199 135 85 235 250 41 245
+
 def FIR_A(inputPixels,numPixels):
     c1 = -1;
     c2 = 4;
@@ -9,10 +11,16 @@ def FIR_A(inputPixels,numPixels):
     c6 = -5;
     c7 = 1;
     subPixel = [0]*numPixels
+    print "YAAAAAAA", inputPixels
     for i in xrange(numPixels):
         j = i+3
-        subPixel[i] = (c1*inputPixels[j-3] + c2*inputPixels[j-2] + c3*inputPixels[j-1] + c4*inputPixels[j] + c5*inputPixels[1+j] + c6*inputPixels[2+j] + c7*inputPixels[3+j])/64;
-        # print subPixel
+        subPixel[i] = min(255,(c1*inputPixels[j-3] + c2*inputPixels[j-2] + c3*inputPixels[j-1] +
+                          c4*inputPixels[j] + c5*inputPixels[1+j] + c6*inputPixels[2+j] + c7*inputPixels[3+j])/64);
+
+        # if (subPixel[i] > 255):
+        #     print "bruh you cant do math."
+        #     print "{}".format(hex(subPixel[i]))
+        #     print inputPixels[j-3],inputPixels[j-2],inputPixels[j-1],inputPixels[j],inputPixels[1+j],inputPixels[2+j],inputPixels[3+j]
     return subPixel
 
 def FIR_B(inputPixels,numPixels):
@@ -27,8 +35,8 @@ def FIR_B(inputPixels,numPixels):
     subPixel = [0]*numPixels
     for i in xrange(numPixels):
         j = i+3
-        subPixel[i] = (c1*inputPixels[-3+i] + c2*inputPixels[-2+i] + c3*inputPixels[-1+i] + c4*inputPixels[i] +
-                    c5*inputPixels[1+i] + c6*inputPixels[2+i] + c7*inputPixels[3+i] + c7*inputPixels[4+i])/64;
+        subPixel[i] = min(255,(c1*inputPixels[-3+i] + c2*inputPixels[-2+i] + c3*inputPixels[-1+i] + c4*inputPixels[i] +
+                    c5*inputPixels[1+i] + c6*inputPixels[2+i] + c7*inputPixels[3+i] + c7*inputPixels[4+i])/64);
     return subPixel
 
 def FIR_C(inputPixels,numPixels):
@@ -43,7 +51,8 @@ def FIR_C(inputPixels,numPixels):
     subPixel = [0]*numPixels
     for i in xrange(numPixels):
         j = i+3
-        subPixel[i] = (c1*inputPixels[j-3] + c2*inputPixels[j-2] + c3*inputPixels[j-1] + c4*inputPixels[j] + c5*inputPixels[1+j] + c6*inputPixels[2+j] + c7*inputPixels[3+j])/64;
+        subPixel[i] = min(255,(c1*inputPixels[j-3] + c2*inputPixels[j-2] + c3*inputPixels[j-1] + c4*inputPixels[j] +
+                       c5*inputPixels[1+j] + c6*inputPixels[2+j] + c7*inputPixels[3+j])/64);
         # print subPixel
     return subPixel
 
@@ -57,7 +66,8 @@ def subPixelInterpolate(image_array):
     C = []
     # print image_array
     for image_row in image_array:
-        # print image_row
+
+        print image_row
         subA = FIR_A(image_row,8);
         subB = FIR_B(image_row,8);
         subC = FIR_C(image_row,8);
@@ -71,7 +81,6 @@ def subPixelInterpolate(image_array):
     outputB = outputB[3:11]
     outputC = outputC[3:11]
     for image_col in zip(*image_array)[3:11]:
-        print map(hex,image_col)
         subA = FIR_A(image_col,8);
         subB = FIR_B(image_col,8);
         subC = FIR_C(image_col,8);
@@ -99,12 +108,16 @@ def subPixelInterpolate(image_array):
         outputA += [(subA)]
         outputB += [(subB)]
         outputC += [(subC)]
+    print("ya boi done")
+    pprint ([map(hex, l) for l in zip(*A)])
     return outputA,outputB,outputC
 def main():
     image_array = []
     with open("test_image_2.mem") as file:
         for line in file.readlines():
             image_array.append([int(i,16) for i in line.strip().split()])
+    pprint(image_array)
+
     A,B,C = subPixelInterpolate(image_array)
     pprint([map(hex, l) for l in A])
 

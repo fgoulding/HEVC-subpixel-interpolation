@@ -3,7 +3,6 @@
 module tb;
   reg clk, reset;
   reg [55:0] inputPixels;
-  // reg [7:0] sel;
   reg [7:0] im_memory [0:14][0:14];
   reg [1799:0] integer_array;
   wire [2559:0] A;
@@ -42,12 +41,12 @@ module tb;
   integer i;
   integer j;
 initial begin
-  $monitor({"reset:%h cnt:%h loadOut:%h sel:%h ---\n A: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n",
+  $monitor({"clk = %b; reset:%h cnt:%h loadOut:%h sel:%h ---\n %h\n %h\nA: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n",
   "D: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n",
-  "E: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n",
-  "F: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n",
-  "G: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n\n"},
-  reset,cnt, load_out, sel,
+   "E: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n",
+   "F: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n",
+   "G: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n\n"},
+  clk,reset,cnt, load_out, sel, currentPixels,fir_out_a,
   A[63:0],
   A[127:64],
   A[191:128],
@@ -105,24 +104,24 @@ initial begin
       integer_array[(8*i)+(j*8*15) +: 8] = im_memory[j][i];
     end
   end
-
-  //
-  // integer_array = {im_memory[14], im_memory[13], im_memory[12], im_memory[11], im_memory[10], im_memory[9], im_memory[8], im_memory[7],
-  //                  im_memory[6], im_memory[5], im_memory[4], im_memory[3], im_memory[2], im_memory[1], im_memory[0]};
   $display("Done");
   clk = 0;
   reset = 0;
-  #110;
+  #130;
   reset = 1;
 
 end
 
 
 always
-  #100 clk = !clk;
+  #120 clk = !clk;
+
 
 initial begin
-  #5000 $finish;
+  // #3700 $finish;
+  // #5300 $finish; //A and D finish
+  #13500 $finish;
+
 end
 
 

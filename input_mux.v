@@ -34,7 +34,7 @@ module  input_array_mux(
   wire  [119:0] in_half_C_buffer [0:8]; //for (4+7)*(4+7) interpolation
 
   parameter integer_rows = num_pixel+7;
-  parameter integer_cols = integer_rows+8;
+  parameter integer_cols = integer_rows+8+1;
   parameter half_a_cols = integer_cols + num_pixel;
   parameter half_b_cols = integer_cols + num_pixel*2;
   parameter half_c_cols = integer_cols + num_pixel*3;

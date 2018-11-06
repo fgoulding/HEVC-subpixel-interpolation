@@ -49,29 +49,41 @@ module shift_reg (clock, reset_L, load_L, in, out);
   input load_L;
   input [63:0] in;
   output reg [959:0]	out;
-  integer i=0;
-  integer j=0;
+  integer i;
+  integer j;
   reg [63:0] regi [14:0];
   reg [119:0] regi_t [7:0];
 
   always @(negedge clock) begin
     if (!reset_L) begin
-      for(i=0;i<15;i=i+1) begin
-        regi[i] <= 64'b0;
-      end
+        regi[0] = 8'b0;
+        regi[1] = 8'b0;
+        regi[2] = 8'b0;
+        regi[3] = 8'b0;
+        regi[4] = 8'b0;
+        regi[5] = 8'b0;
+        regi[6] = 8'b0;
+        regi[7] = 8'b0;
+        regi[8] = 8'b0;
+        regi[9] = 8'b0;
+        regi[10] = 8'b0;
+        regi[11] = 8'b0;
+        regi[12] = 8'b0;
+        regi[13] = 8'b0;
+        regi[14] = 8'b0;
+
     end
     else if (~load_L) begin
       //byte shift register
-      for( i=1;i<15;i=i+1) begin
-        regi[i] <= regi[i-1];
+      for( i=0;i<14;i=i+1) begin
+        regi[i] <= regi[i+1];
       end
-      regi[0] <= in;
-
-    for(i=0;i<15;i=i+1) begin
-      for (j=0;j<8;j=j+1) begin
-        regi_t[j][i*8 +:8] = regi[i][j*8 +:8];
+      regi[14] = in;
+      for(i=0;i<15;i=i+1) begin
+        for (j=0;j<8;j=j+1) begin
+          regi_t[j][i*8 +:8] = regi[i][j*8 +:8];
+        end
       end
-    end
     out = {regi_t[7],regi_t[6],regi_t[5],regi_t[4],regi_t[3],regi_t[2],regi_t[1],regi_t[0]};
     end
   end
@@ -122,6 +134,13 @@ module output_filler(clock, reset_L, load_L, sel, in, out);
           regi[23],regi[22],regi[21],regi[20],regi[19],regi[18],regi[17],regi[16],
           regi[15],regi[14],regi[13],regi[12],regi[11],regi[10],regi[9],regi[8],
           regi[7],regi[6],regi[5],regi[4],regi[3],regi[2],regi[1],regi[0]};
+    end
+    else begin
+      out = {regi[39],regi[38],regi[37],regi[36],regi[35],regi[34],regi[33],regi[32],
+            regi[31],regi[30],regi[29],regi[28],regi[27],regi[26],regi[25],regi[24],
+            regi[23],regi[22],regi[21],regi[20],regi[19],regi[18],regi[17],regi[16],
+            regi[15],regi[14],regi[13],regi[12],regi[11],regi[10],regi[9],regi[8],
+            regi[7],regi[6],regi[5],regi[4],regi[3],regi[2],regi[1],regi[0]};
     end
   end
 
