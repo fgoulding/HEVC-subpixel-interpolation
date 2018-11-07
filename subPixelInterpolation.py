@@ -11,11 +11,11 @@ def FIR_A(inputPixels,numPixels):
     c6 = -5;
     c7 = 1;
     subPixel = [0]*numPixels
-    print "YAAAAAAA", inputPixels
+    #print "YAAAAAAA", inputPixels
     for i in xrange(numPixels):
         j = i+3
-        subPixel[i] = min(255,(c1*inputPixels[j-3] + c2*inputPixels[j-2] + c3*inputPixels[j-1] +
-                          c4*inputPixels[j] + c5*inputPixels[1+j] + c6*inputPixels[2+j] + c7*inputPixels[3+j])/64);
+        subPixel[i] = ((c1*inputPixels[j-3] + c2*inputPixels[j-2] + c3*inputPixels[j-1] +
+                          c4*inputPixels[j] + c5*inputPixels[1+j] + c6*inputPixels[2+j] + c7*inputPixels[3+j])/64) & 0b11111111;
 
         # if (subPixel[i] > 255):
         #     print "bruh you cant do math."
@@ -35,8 +35,8 @@ def FIR_B(inputPixels,numPixels):
     subPixel = [0]*numPixels
     for i in xrange(numPixels):
         j = i+3
-        subPixel[i] = min(255,(c1*inputPixels[-3+i] + c2*inputPixels[-2+i] + c3*inputPixels[-1+i] + c4*inputPixels[i] +
-                    c5*inputPixels[1+i] + c6*inputPixels[2+i] + c7*inputPixels[3+i] + c7*inputPixels[4+i])/64);
+        subPixel[i] = ((c1*inputPixels[j-3] + c2*inputPixels[j-2] + c3*inputPixels[j-1] + c4*inputPixels[j] +
+                    c5*inputPixels[1+j] + c6*inputPixels[2+j] + c7*inputPixels[3+j] + c8*inputPixels[4+j])/64) & 0b11111111;
     return subPixel
 
 def FIR_C(inputPixels,numPixels):
@@ -51,8 +51,9 @@ def FIR_C(inputPixels,numPixels):
     subPixel = [0]*numPixels
     for i in xrange(numPixels):
         j = i+3
-        subPixel[i] = min(255,(c1*inputPixels[j-3] + c2*inputPixels[j-2] + c3*inputPixels[j-1] + c4*inputPixels[j] +
-                       c5*inputPixels[1+j] + c6*inputPixels[2+j] + c7*inputPixels[3+j])/64);
+        subPixel[i] = ((c1*inputPixels[j-3] + c2*inputPixels[j-2] + c3*inputPixels[j-1] + c4*inputPixels[j] +
+                       c5*inputPixels[1+j] + c6*inputPixels[2+j] + c7*inputPixels[3+j])/64) & 0b11111111;
+
         # print subPixel
     return subPixel
 
@@ -67,7 +68,7 @@ def subPixelInterpolate(image_array):
     # print image_array
     for image_row in image_array:
 
-        print image_row
+        #print image_row
         subA = FIR_A(image_row,8);
         subB = FIR_B(image_row,8);
         subC = FIR_C(image_row,8);
@@ -108,18 +109,46 @@ def subPixelInterpolate(image_array):
         outputA += [(subA)]
         outputB += [(subB)]
         outputC += [(subC)]
-    print("ya boi done")
-    pprint ([map(hex, l) for l in zip(*A)])
+    #print("ya boi done")
+    temp_A = ([map(hex, l) for l in zip(*A)])
+    for ele in temp_A:
+    	print ele;
     return outputA,outputB,outputC
 def main():
     image_array = []
     with open("test_image_2.mem") as file:
         for line in file.readlines():
             image_array.append([int(i,16) for i in line.strip().split()])
-    pprint(image_array)
+    #pprint(image_array)
 
     A,B,C = subPixelInterpolate(image_array)
-    pprint([map(hex, l) for l in A])
+    A_hex = [map(hex, l) for l in A]
+
+    split = 2;
+    A_verilog = []
+    with open("output_1.txt") as verilog_output:
+    	for line in verilog_output.readlines():
+    		digits = ['0x'+line[i:i+split] for i in range(0, len(line)-1, split)][::-1];
+    		A_verilog.insert(0, digits);
+
+    pprint(A_verilog)
+    pprint(A_hex)
+
+    count = 0;
+    for x in xrange(len(A_verilog)):
+    	# if (A_verilog[x] != A_hex[x]):
+    	# 	print x
+    	# 	print A_hex[x]
+    	# 	print A_verilog[x]
+    	for char_x, char_y in zip(A_verilog[x],A_hex[x]):
+    		if ((char_x != char_y) and (char_y != '0xff')):
+    			count += 1;
+    			print x
+    			print A_hex[x]
+    			print A_verilog[x]
+    			break
+    	 		#print int(char_x,0), int(char_y,0);
+
 
 
 if __name__ == '__main__':

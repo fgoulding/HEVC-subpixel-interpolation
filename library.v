@@ -71,6 +71,12 @@ module shift_reg (clock, reset_L, load_L, in, out);
         regi[12] = 8'b0;
         regi[13] = 8'b0;
         regi[14] = 8'b0;
+        for(i=0;i<15;i=i+1) begin
+          for (j=0;j<8;j=j+1) begin
+            regi_t[j][i*8 +:8] = regi[i][j*8 +:8];
+          end
+        end
+      out = {regi_t[7],regi_t[6],regi_t[5],regi_t[4],regi_t[3],regi_t[2],regi_t[1],regi_t[0]};
 
     end
     else if (~load_L) begin
@@ -78,7 +84,7 @@ module shift_reg (clock, reset_L, load_L, in, out);
       for( i=0;i<14;i=i+1) begin
         regi[i] <= regi[i+1];
       end
-      regi[14] = in;
+      regi[14] <= in;
       for(i=0;i<15;i=i+1) begin
         for (j=0;j<8;j=j+1) begin
           regi_t[j][i*8 +:8] = regi[i][j*8 +:8];

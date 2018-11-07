@@ -26,7 +26,7 @@ end
 
 initial begin
   $write("Loading rom...");
-  $readmemh("test_image_2.mem", im_memory);
+  $readmemh("test_image_3.mem", im_memory);
 
   $display("Done");
 
@@ -60,7 +60,7 @@ always
   #10 clk = !clk;
 
 initial begin
-  #10000 $finish;
+  #1000 $finish;
 end
 
 

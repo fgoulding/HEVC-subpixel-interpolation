@@ -14,5 +14,8 @@ def hex_matrix(start_value, rand=False, D=15):
 	return matrix;
 
 
-print hex_matrix(31, True)
-# print hex_matrix(13)
+#print hex_matrix(31, True)
+print hex_matrix(0)
+
+with open("test_image_3.mem", "w") as output_image:
+	output_image.write(hex_matrix(0)); 

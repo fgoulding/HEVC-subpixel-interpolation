@@ -41,12 +41,20 @@ module tb;
   integer i;
   integer j;
 initial begin
-  $monitor({"clk = %b; reset:%h cnt:%h loadOut:%h sel:%h ---\n %h\n %h\nA: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n",
-  "D: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n",
-   "E: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n",
-   "F: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n",
-   "G: \n %h\n %h\n %h\n %h\n %h\n %h\n %h\n %h\n ------\n\n"},
-  clk,reset,cnt, load_out, sel, currentPixels,fir_out_a,
+  $monitor({"clk = %b; reset:%h cnt:%h loadOut:%h sel:%h ---\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
+  "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
+   "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
+   "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
+   "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n\n"},
+  clk,reset,cnt, load_out, sel, fir_out_a,
+  temp_A[119:0],
+  temp_A[239:120],
+  temp_A[359:240],
+  temp_A[479:360],
+  temp_A[599:480],
+  temp_A[719:600],
+  temp_A[839:720],
+  temp_A[959:840],
   A[63:0],
   A[127:64],
   A[191:128],
@@ -120,7 +128,7 @@ always
 initial begin
   // #3700 $finish;
   // #5300 $finish; //A and D finish
-  #13500 $finish;
+  #12500 $finish;
 
 end
 

@@ -33,11 +33,11 @@ module  input_array_mux(
   wire  [119:0] in_half_B_buffer [0:8]; //for (4+7)*(4+7) interpolation
   wire  [119:0] in_half_C_buffer [0:8]; //for (4+7)*(4+7) interpolation
 
-  parameter integer_rows = num_pixel+7;
-  parameter integer_cols = integer_rows+8+1;
+  parameter integer_rows = num_pixel+7+1;
+  parameter integer_cols = integer_rows+num_pixel;
   parameter half_a_cols = integer_cols + num_pixel;
-  parameter half_b_cols = integer_cols + num_pixel*2;
-  parameter half_c_cols = integer_cols + num_pixel*3;
+  parameter half_b_cols = half_a_cols + num_pixel;
+  parameter half_c_cols = half_b_cols + num_pixel;
 
   assign {in_buffer[14],in_buffer[13],in_buffer[12],in_buffer[11],in_buffer[10],
           in_buffer[9],in_buffer[8],in_buffer[7],in_buffer[6],in_buffer[5],
@@ -50,7 +50,7 @@ module  input_array_mux(
   assign {in_half_C_buffer[7],in_half_C_buffer[6],in_half_C_buffer[5],in_half_C_buffer[4],
           in_half_C_buffer[3],in_half_C_buffer[2],in_half_C_buffer[1],in_half_C_buffer[0]} = c_half_array;
 
-  assign val = (sel-integer_rows+3)*8;
+  assign val = (sel-integer_rows+4)*8;
 
   always @(posedge clock)
  	begin: MUX
