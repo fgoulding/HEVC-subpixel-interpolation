@@ -35,8 +35,8 @@ def FIR_B(inputPixels,numPixels):
     subPixel = [0]*numPixels
     for i in xrange(numPixels):
         j = i+3
-        subPixel[i] = ((c1*inputPixels[j-3] + c2*inputPixels[j-2] + c3*inputPixels[j-1] + c4*inputPixels[j] +
-                    c5*inputPixels[1+j] + c6*inputPixels[2+j] + c7*inputPixels[3+j] + c8*inputPixels[4+j])/64) & 0b11111111;
+        subPixel[i] = min(((c1*inputPixels[j-3] + c2*inputPixels[j-2] + c3*inputPixels[j-1] + c4*inputPixels[j] +
+                    c5*inputPixels[1+j] + c6*inputPixels[2+j] + c7*inputPixels[3+j] + c8*inputPixels[4+j])/64), 255);
     return subPixel
 
 def FIR_C(inputPixels,numPixels):
@@ -111,8 +111,6 @@ def subPixelInterpolate(image_array):
         outputC += [(subC)]
     #print("ya boi done")
     temp_A = ([map(hex, l) for l in zip(*A)])
-    for ele in temp_A:
-    	print ele;
     return outputA,outputB,outputC
 def main():
     image_array = []
@@ -122,7 +120,7 @@ def main():
     #pprint(image_array)
 
     A,B,C = subPixelInterpolate(image_array)
-    A_hex = [map(hex, l) for l in A]
+    A_hex = [map(lambda x:"0x"+format(x,'02x'), l) for l in A]
 
     split = 2;
     A_verilog = []
@@ -136,10 +134,6 @@ def main():
 
     count = 0;
     for x in xrange(len(A_verilog)):
-    	# if (A_verilog[x] != A_hex[x]):
-    	# 	print x
-    	# 	print A_hex[x]
-    	# 	print A_verilog[x]
     	for char_x, char_y in zip(A_verilog[x],A_hex[x]):
     		if ((char_x != char_y) and (char_y != '0xff')):
     			count += 1;
