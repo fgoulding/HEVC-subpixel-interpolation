@@ -14,8 +14,8 @@ def FIR_A(inputPixels,numPixels):
     #print "YAAAAAAA", inputPixels
     for i in xrange(numPixels):
         j = i+3
-        subPixel[i] = ((c1*inputPixels[j-3] + c2*inputPixels[j-2] + c3*inputPixels[j-1] +
-                          c4*inputPixels[j] + c5*inputPixels[1+j] + c6*inputPixels[2+j] + c7*inputPixels[3+j])/64) & 0b11111111;
+        subPixel[i] = min(((c1*inputPixels[j-3] + c2*inputPixels[j-2] + c3*inputPixels[j-1] +
+                          c4*inputPixels[j] + c5*inputPixels[1+j] + c6*inputPixels[2+j] + c7*inputPixels[3+j])/64), 255);
 
         # if (subPixel[i] > 255):
         #     print "bruh you cant do math."
@@ -51,8 +51,8 @@ def FIR_C(inputPixels,numPixels):
     subPixel = [0]*numPixels
     for i in xrange(numPixels):
         j = i+3
-        subPixel[i] = ((c1*inputPixels[j-3] + c2*inputPixels[j-2] + c3*inputPixels[j-1] + c4*inputPixels[j] +
-                       c5*inputPixels[1+j] + c6*inputPixels[2+j] + c7*inputPixels[3+j])/64) & 0b11111111;
+        subPixel[i] = min(((c1*inputPixels[j-3] + c2*inputPixels[j-2] + c3*inputPixels[j-1] + c4*inputPixels[j] +
+                       c5*inputPixels[1+j] + c6*inputPixels[2+j] + c7*inputPixels[3+j])/64), 255);
 
         # print subPixel
     return subPixel
@@ -110,7 +110,7 @@ def subPixelInterpolate(image_array):
         outputB += [(subB)]
         outputC += [(subC)]
     #print("ya boi done")
-    temp_A = ([map(hex, l) for l in zip(*A)])
+    temp_B = ([map(hex, l) for l in zip(*A)])
     return outputA,outputB,outputC
 def main():
     image_array = []
@@ -121,27 +121,50 @@ def main():
 
     A,B,C = subPixelInterpolate(image_array)
     A_hex = [map(lambda x:"0x"+format(x,'02x'), l) for l in A]
+    B_hex = [map(lambda x:"0x"+format(x,'02x'), l) for l in B]
+    C_hex = [map(lambda x:"0x"+format(x,'02x'), l) for l in C]
 
     split = 2;
     A_verilog = []
-    with open("output_1.txt") as verilog_output:
-    	for line in verilog_output.readlines():
+    B_verilog = []
+    C_verilog = []
+
+    with open("output_1.txt") as a_output:
+    	for line in a_output.readlines():
     		digits = ['0x'+line[i:i+split] for i in range(0, len(line)-1, split)][::-1];
     		A_verilog.insert(0, digits);
 
-    pprint(A_verilog)
-    pprint(A_hex)
+    with open("output_2_b.txt") as b_output:
+    	for line in b_output.readlines():
+    		digits = ['0x'+line[i:i+split] for i in range(0, len(line)-1, split)][::-1];
+    		B_verilog.insert(0, digits);
 
+    with open("output_2_c.txt") as c_output:
+    	for line in c_output.readlines():
+    		digits = ['0x'+line[i:i+split] for i in range(0, len(line)-1, split)][::-1];
+    		C_verilog.insert(0, digits);
+
+    #pprint(out_verilog)
+    #pprint(A_hex)
+
+    #compare to one of the output buffer
+    out_python = [A_hex, B_hex, C_hex];
+    out_verilog = [A_verilog, B_verilog, C_verilog]
     count = 0;
-    for x in xrange(len(A_verilog)):
-    	for char_x, char_y in zip(A_verilog[x],A_hex[x]):
-    		if ((char_x != char_y) and (char_y != '0xff')):
-    			count += 1;
-    			print x
-    			print A_hex[x]
-    			print A_verilog[x]
-    			break
+    for i, output_buffer in enumerate(out_verilog):
+    	print "Testing for output_" + chr(i + 65)
+    	for x in xrange(len(output_buffer)):
+    		for char_x, char_y in zip(output_buffer[x],out_python[i][x]):
+    			if (char_x != char_y):
+	    			count += 1;
+	    			print x
+	    			print out_python[i][x]
+	    			print output_buffer[x]
+	    			break
     	 		#print int(char_x,0), int(char_y,0);
+    	print "Done testing for output_" + chr(i + 65)
+
+    print "Total wrong output rows: " + str(count);
 
 
 
