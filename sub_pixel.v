@@ -16,7 +16,10 @@ module subpixel_interpolation(clk,rst, in_buffer,
   parameter sizeofPixel = 8;
   input clk;
   input rst;
+
+  // this should just be 1 row in size...
   input  [1799:0] in_buffer; //for (4+7)*(4+7) interpolation
+
   output [2559:0] out_A; //feedback buffer
   output [2559:0] out_B; //feedback buffer
   output [2559:0] out_C; //feedback buffer
@@ -58,6 +61,7 @@ module subpixel_interpolation(clk,rst, in_buffer,
   register #(.WIDTH(8)) select(clk, rst, 1'b0, cnt, sel);
   register #(.WIDTH(8)) select2(clk, rst, 1'b0, sel, sel2);
 
+  // shift register where output is in_buffer
   input_array_mux input_mux(clk,rst,cnt,s,in_buffer, temp_A, temp_B, temp_C, cnt, currentPixels);
 
   // genvar i;
