@@ -50,7 +50,7 @@ module  input_array_mux(
   assign {in_half_C_buffer[7],in_half_C_buffer[6],in_half_C_buffer[5],in_half_C_buffer[4],
           in_half_C_buffer[3],in_half_C_buffer[2],in_half_C_buffer[1],in_half_C_buffer[0]} = c_half_array;
 
-  assign val = (sel-integer_rows+4)*8;
+  assign val = (sel-integer_rows+3)*8;
 
   always @(posedge clock)
  	begin: MUX

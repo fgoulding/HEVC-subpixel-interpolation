@@ -49,14 +49,14 @@ module tb;
   integer j;
 initial begin
   $monitor({"clk = %b; next_row = %d;  reset:%h cnt:%h loadOut:%h sel:%h ---\n",
-  "%h",
+  "%h\n",
   "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
   "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
   "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
    "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
    "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
    "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n\n"},
-  clk,next_row,reset,cnt, load_out, sel, input_row,fir_out_a,
+  clk,next_row,reset,cnt, load_out, sel, input_row,fir_out_c,
   temp_C[119:0],
   temp_C[239:120],
   temp_C[359:240],
