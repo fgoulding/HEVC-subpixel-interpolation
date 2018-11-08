@@ -49,6 +49,7 @@ module subpixel_interpolation(clk,rst, in_row,next_row,
   wire [7:0] so;
   wire [7:0] val;
   wire [7:0] cnt;
+  wire [7:0] cnt_mod;
   // new inputs from outputs of last cycle
   wire [959:0] temp_A;
   wire [959:0] temp_B;
@@ -69,8 +70,8 @@ module subpixel_interpolation(clk,rst, in_row,next_row,
 
   // shift register where output is in_buffer
   wire  [1799:0] in_buffer; //for (4+7)*(4+7) interpolation
-  // assign cnt = cnt % 47;
-  assign load_in = !(cnt < 16);
+  assign cnt_mod = cnt % 47; //(cnt < 47) ? cnt: 0;
+  assign load_in = !(cnt_mod < 16);
   input_shift_reg input_register(clk, rst, load_in,in_row,in_buffer);
   input_array_mux input_mux(clk,rst,sel,s,in_buffer, temp_A, temp_B, temp_C, sel, currentPixels);
 
