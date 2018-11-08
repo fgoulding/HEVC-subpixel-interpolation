@@ -8,10 +8,10 @@
  *
  **********************/
 
-module subpixel_interpolation(clk,rst, in_row,
+module subpixel_interpolation(clk,rst, in_row,next_row,
                               out_A, out_B, out_C,cnt,
                               fir_out_a, fir_out_b, fir_out_c,
-                              temp_A, temp_B,temp_C, load_out, sel,currentPixels);
+                              temp_A, temp_B,temp_C, load_out, sel,currentPixels,next_row);
   parameter num_pixel = 8;
   parameter sizeofPixel = 8;
   input clk;
@@ -19,6 +19,8 @@ module subpixel_interpolation(clk,rst, in_row,
 
   // this should just be 1 row in size...
   input  [119:0] in_row;
+  output [63:0] next_row;
+
   // input  [1799:0] in_buffer; //for (4+7)*(4+7) interpolation
 
   // TODO: deal with later
@@ -35,6 +37,7 @@ module subpixel_interpolation(clk,rst, in_row,
   output [959:0] temp_C;
   output load_out;
   output [7:0] sel;
+
   /////////////////////////////
   output [119:0] currentPixels;
   wire [119:0] currentPixels;
@@ -56,18 +59,18 @@ module subpixel_interpolation(clk,rst, in_row,
   wire [63:0] fir_out_c;
   wire load_out,load_L,load_in;
   wire _update_row;
+  wire [63:0] next_row;
   assign _update_row = 1'b1;
 
   counter_wA row_counter(clk,rst, _update_row, next_row);
-
   counter pc(clk, rst, cnt);
   register #(.WIDTH(8)) select(clk, rst, 1'b0, cnt, sel);
   register #(.WIDTH(8)) select2(clk, rst, 1'b0, sel, sel2);
 
   // shift register where output is in_buffer
   wire  [1799:0] in_buffer; //for (4+7)*(4+7) interpolation
-  assign cnt = cnt % 47;
-  assign load_in = (cnt < 16);
+  // assign cnt = cnt % 47;
+  assign load_in = !(cnt < 16);
   input_shift_reg input_register(clk, rst, load_in,in_row,in_buffer);
   input_array_mux input_mux(clk,rst,sel,s,in_buffer, temp_A, temp_B, temp_C, sel, currentPixels);
 

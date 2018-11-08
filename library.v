@@ -40,7 +40,7 @@ module counter (clk, reset_L, cnt);
 
 endmodule
 
-module counter_wA (clk, reset_L,active, cnt);
+module counter_wA (clk, reset_L, active, cnt);
   input		clk;
   input		reset_L;
   input		active;
