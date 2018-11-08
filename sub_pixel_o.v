@@ -9,19 +9,34 @@
  **********************/
 
 module subpixel_interpolation(clk,rst, in_buffer,
-                              out_A, out_B, out_C);
+                              out_A, out_B, out_C,cnt,fir_out_a,
+                            fir_out_b,
+                            fir_out_c,temp_A, temp_B,temp_C, load_out, sel,currentPixels);
   parameter num_pixel = 8;
   parameter sizeofPixel = 8;
   input clk;
   input rst;
+
+  // this should just be 1 row in size...
   input  [1799:0] in_buffer; //for (4+7)*(4+7) interpolation
+
   output [2559:0] out_A; //feedback buffer
   output [2559:0] out_B; //feedback buffer
   output [2559:0] out_C; //feedback buffer
+  output [7:0] cnt;
+  output [63:0] fir_out_a;
+  output [63:0] fir_out_b;
+  output [63:0] fir_out_c;
+  output [959:0] temp_A;
+  output [959:0] temp_B;
+  output [959:0] temp_C;
+  output load_out;
+  output [7:0] sel;
   // reg [959:0] out_A; //feedback buffer
   // reg [959:0] out_B; //feedback buffer
   // reg [959:0] out_C; //feedback buffer
   /////////////////////////////
+  output [119:0] currentPixels;
 
   wire [119:0] currentPixels;
 
@@ -46,6 +61,7 @@ module subpixel_interpolation(clk,rst, in_buffer,
   register #(.WIDTH(8)) select(clk, rst, 1'b0, cnt, sel);
   register #(.WIDTH(8)) select2(clk, rst, 1'b0, sel, sel2);
 
+  // shift register where output is in_buffer
   input_array_mux input_mux(clk,rst,cnt,s,in_buffer, temp_A, temp_B, temp_C, cnt, currentPixels);
 
   // genvar i;
@@ -107,7 +123,7 @@ module subpixel_interpolation(clk,rst, in_buffer,
   shift_reg sr_B(clk, rst, load_L, fir_out_b , temp_B);
   shift_reg sr_C(clk, rst, load_L, fir_out_c , temp_C);
 
-  assign load_out = !(((so > 2) && (so < 12)) || ((so > 14) && (so < 48)));
+  assign load_out = !(((so > 2) && (so < 11)) || ((so > 15) && (so < 48)));
   output_filler filler_a(clk, rst, load_out, sel, fir_out_a, out_A);
   output_filler filler_b(clk, rst, load_out, sel, fir_out_b, out_B);
   output_filler filler_c(clk, rst, load_out, sel, fir_out_c, out_C);

@@ -58,7 +58,7 @@ module  input_array_mux(
     if (sel < integer_rows) begin
       //select row from integer_array
       //use case to select row? or just pass an input row somehow?
-      mux <= in_buffer[sel];
+      mux <= in_buffer[14];
     end
     else if (sel < integer_cols) begin
       mux[7:0] <= in_buffer[0][val +: 8];
