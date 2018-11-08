@@ -40,6 +40,22 @@ module counter (clk, reset_L, cnt);
 
 endmodule
 
+module counter_wA (clk, reset_L,active, cnt);
+  input		clk;
+  input		reset_L;
+  input		active;
+  output	[63:0]	cnt;
+  reg	[63:0]	cnt;
+
+  always @(posedge clk)
+    if (!reset_L)
+      cnt = 0;
+    else begin
+      if (active)
+        cnt = cnt + 1;
+    end
+endmodule
+
 /*
  *
  */

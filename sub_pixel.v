@@ -8,7 +8,7 @@
  *
  **********************/
 
-module subpixel_interpolation(clk,rst, in_buffer,
+module subpixel_interpolation(clk,rst, in_row,
                               out_A, out_B, out_C,cnt,fir_out_a,
                             fir_out_b,
                             fir_out_c,temp_A, temp_B,temp_C, load_out, sel,currentPixels);
@@ -59,6 +59,10 @@ module subpixel_interpolation(clk,rst, in_buffer,
   wire [63:0] fir_out_b;
   wire [63:0] fir_out_c;
   wire load_out,load_L;
+  wire _update_row;
+  assign _update_row = 1'b1;
+
+  counter_wA row_counter(clk,rst, _update_row, next_row);
 
   counter pc(clk, rst, cnt);
   register #(.WIDTH(8)) select(clk, rst, 1'b0, cnt, sel);
