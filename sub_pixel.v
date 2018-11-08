@@ -8,10 +8,10 @@
  *
  **********************/
 
-module subpixel_interpolation(clk,rst, in_buffer,
-                              out_A, out_B, out_C,cnt,fir_out_a,
-                            fir_out_b,
-                            fir_out_c,temp_A, temp_B,temp_C, load_out, sel,currentPixels);
+module subpixel_interpolation(clk,rst, in_row,
+                              out_A, out_B, out_C,cnt,
+                              fir_out_a, fir_out_b, fir_out_c,
+                              temp_A, temp_B,temp_C, load_out, sel,currentPixels);
   parameter num_pixel = 8;
   parameter sizeofPixel = 8;
   input clk;
@@ -35,12 +35,8 @@ module subpixel_interpolation(clk,rst, in_buffer,
   output [959:0] temp_C;
   output load_out;
   output [7:0] sel;
-  // reg [959:0] out_A; //feedback buffer
-  // reg [959:0] out_B; //feedback buffer
-  // reg [959:0] out_C; //feedback buffer
   /////////////////////////////
   output [119:0] currentPixels;
-
   wire [119:0] currentPixels;
 
   /////////////////////////////
@@ -58,19 +54,18 @@ module subpixel_interpolation(clk,rst, in_buffer,
   wire [63:0] fir_out_a;
   wire [63:0] fir_out_b;
   wire [63:0] fir_out_c;
-  wire load_out,load_L;
+  wire load_out,load_L, load_in;
 
   counter pc(clk, rst, cnt);
   register #(.WIDTH(8)) select(clk, rst, 1'b0, cnt, sel);
   register #(.WIDTH(8)) select2(clk, rst, 1'b0, sel, sel2);
 
   // shift register where output is in_buffer
-  reg  [1799:0] in_buffer; //for (4+7)*(4+7) interpolation
-  wire input_load;
-  assign input_load = (sel%/*TODO: total number of cycles for all half pixels*/)< 15)
-  input_shift_reg input_register(#parameter thingy)(clk, rst, /*TODO: active loading*/, inputRow , in_buffer);
-
-  input_array_mux input_mux(clk,rst,cnt,s,in_buffer, temp_A, temp_B, temp_C, cnt, currentPixels);
+  wire  [1799:0] in_buffer; //for (4+7)*(4+7) interpolation
+  assign cnt = cnt % 47;
+  assign load_in = (cnt < 16);
+  input_shift_reg input_register(clk, rst, load_in,in_row,in_buffer);
+  input_array_mux input_mux(clk,rst,sel,s,in_buffer, temp_A, temp_B, temp_C, sel, currentPixels);
 
   // genvar i;
   // generate
