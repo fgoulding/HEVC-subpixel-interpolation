@@ -115,7 +115,7 @@ end
 
 initial begin
   $write("Loading rom...");
-  $readmemh("test_image_2.mem", im_memory);
+  $readmemh("image_array/test_image_2.mem", im_memory);
 
   for (i=0; i<15; i=i+1) begin
       im_rows[i] = {im_memory[i][14],im_memory[i][13],im_memory[i][12],im_memory[i][11],im_memory[i][10],
