@@ -191,9 +191,9 @@ module output_filler(clock, reset_L, load_L, sel, in, out);
     //or greater than num of total pixels
     else if (~load_L) begin
       for( i=1;i<40;i=i+1) begin
-        regi[i] = regi[i-1];
+        regi[i] <= regi[i-1];
       end
-      regi[0] = in;
+      regi[0] <= in;
       // //byte shift register
       // if ((sel > 2) && (sel < 11)) begin
       //   regi[sel-3] <= in;
