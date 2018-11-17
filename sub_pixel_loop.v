@@ -11,7 +11,7 @@
 module subpixel_interpolation(clk,rst, in_row,next_row,
                               out_A, out_B, out_C,cnt,
                               fir_out_a, fir_out_b, fir_out_c,
-                              temp_B, load_out, sel,currentPixels,next_row);
+                              temp_B, load_out, sel,currentPixels);
   parameter num_pixel = 8;
   parameter sizeofPixel = 8;
   input clk;
