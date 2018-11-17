@@ -143,7 +143,7 @@ module input_shift_reg(clock, reset_L, load_L, in, out);
         regi[12] <= 8'b0;
         regi[13] <= 8'b0;
         regi[14] <= 8'b0;
-      out = {regi[14],regi[13],regi[12],regi[11],regi[10],regi[9],regi[8],
+      out <= {regi[14],regi[13],regi[12],regi[11],regi[10],regi[9],regi[8],
              regi[7],regi[6],regi[5],regi[4],regi[3],regi[2],regi[1],regi[0]};
 
     end
@@ -168,8 +168,8 @@ module output_filler(clock, reset_L, load_L, sel, in, out);
   input [7:0] sel;
   input [63:0] in;
   output reg [2559:0]	out; //8 rows by 8 cols by 5 pixels by 8 bits
-  integer i=0;
-  integer j=0;
+  integer i;
+  integer j;
   reg [63:0] regi [39:0]; //8*8 by 8*5
 
   always @(negedge clock) begin
