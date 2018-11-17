@@ -217,3 +217,26 @@ module output_filler(clock, reset_L, load_L, sel, in, out);
   end
 
 endmodule
+
+
+module output_filler_row(clock, reset_L, load_L, sel, in, out,valid);
+  input		clock;
+  input		reset_L;
+  input load_L;
+  input [7:0] sel;
+  input [63:0] in;
+  output reg [39:0]	out; //8 rows by 8 cols by 5 pixels by 8 bits
+  output reg valid; //8 rows by 8 cols by 5 pixels by 8 bits
+  integer i;
+  integer j;
+  always @(negedge clock) begin
+    //make load L check that sel is not 0,1,2 or 11,12,13,14
+    //or greater than num of total pixels
+    valid <= 1'b0;
+    if (~load_L) begin
+      out <= in;
+      valid <= 1'b1;
+    end
+  end
+
+endmodule
