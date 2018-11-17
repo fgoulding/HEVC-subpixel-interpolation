@@ -114,7 +114,7 @@ def subPixelInterpolate(image_array):
     return outputA,outputB,outputC
 def main():
     image_array = []
-    with open("test_image_2.mem") as file:
+    with open("image_array/test_image_2.mem") as file:
         for line in file.readlines():
             image_array.append([int(i,16) for i in line.strip().split()])
     #pprint(image_array)
@@ -129,17 +129,17 @@ def main():
     B_verilog = []
     C_verilog = []
 
-    with open("output_1.txt") as a_output:
+    with open("output/output_2_a.txt") as a_output:
     	for line in a_output.readlines():
     		digits = ['0x'+line[i:i+split] for i in range(0, len(line)-1, split)][::-1];
     		A_verilog.insert(0, digits);
 
-    with open("output_2_b.txt") as b_output:
+    with open("output/output_2_b.txt") as b_output:
     	for line in b_output.readlines():
     		digits = ['0x'+line[i:i+split] for i in range(0, len(line)-1, split)][::-1];
     		B_verilog.insert(0, digits);
 
-    with open("output_2_c.txt") as c_output:
+    with open("output/output_2_c.txt") as c_output:
     	for line in c_output.readlines():
     		digits = ['0x'+line[i:i+split] for i in range(0, len(line)-1, split)][::-1];
     		C_verilog.insert(0, digits);
