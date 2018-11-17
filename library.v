@@ -98,9 +98,9 @@ module shift_reg (clock, reset_L, load_L, in, out);
     else if (~load_L) begin
       //byte shift register
       for( i=0;i<14;i=i+1) begin
-        regi[i] <= regi[i+1];
+        regi[i] = regi[i+1];
       end
-      regi[14] <= in;
+      regi[14] = in;
       for(i=0;i<15;i=i+1) begin
         for (j=0;j<8;j=j+1) begin
           regi_t[j][i*8 +:8] = regi[i][j*8 +:8];
@@ -170,8 +170,8 @@ module output_filler(clock, reset_L, load_L, sel, in, out);
   input [7:0] sel;
   input [63:0] in;
   output reg [2559:0]	out; //8 rows by 8 cols by 5 pixels by 8 bits
-  integer i=0;
-  integer j=0;
+  integer i;
+  integer j;
   reg [63:0] regi [39:0]; //8*8 by 8*5
 
   always @(negedge clock) begin
