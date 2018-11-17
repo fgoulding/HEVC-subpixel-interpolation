@@ -45,24 +45,21 @@ module tb;
 
   integer i;
   integer j;
+  integer f_a;
+  integer f_b;
+  integer f_c;
 initial begin
+  f_a = $fopen("output\\output_2_a_loop.txt");
+  f_b = $fopen("output\\output_2_b_loop.txt");
+  f_c = $fopen("output\\output_2_c_loop.txt");
   $monitor({"clk = %b; next_row = %d;  reset:%h cnt:%h loadOut:%h sel:%h ---\n",
   "---ROW---\n%h\n------\n",
-  "%h\n---\n\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
   "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
   "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
    "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
    "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
    "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n\n"},
   clk,next_row,reset,cnt, load_out, sel, input_row,fir_out_b,
-  temp_B[119:0],
-  temp_B[239:120],
-  temp_B[359:240],
-  temp_B[479:360],
-  temp_B[599:480],
-  temp_B[719:600],
-  temp_B[839:720],
-  temp_B[959:840],
   C[63:0],
   C[127:64],
   C[191:128],
@@ -133,12 +130,94 @@ always
   #120 clk = !clk;
 
 
-initial begin
-  // #3700 $finish;
-  // #5300 $finish; //A and D finish
-  #10500 $finish;
+  initial begin
+    #13500 $fwrite(f_c, {"%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n",
+      "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n",
+      "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n"},
+       C[63:0],
+       C[127:64],
+       C[191:128],
+       C[255:192],
+       C[319:256],
+       C[383:320],
+       C[447:384],
+       C[511:448],
+       C[575:512],
+       C[639:576],
+       C[703:640],
+       C[767:704],
+       C[831:768],
+       C[895:832],
+       C[959:896],
+       C[1023:960],
+       C[1087:1024],
+       C[1151:1088],
+       C[1215:1152],
+       C[1279:1216],
+       C[1343:1280],
+       C[1407:1344],
+       C[1471:1408],
+       C[1535:1472]);
+  $fwrite(f_b, {"%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n",
+       "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n",
+       "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n"},
+        B[63:0],
+        B[127:64],
+        B[191:128],
+        B[255:192],
+        B[319:256],
+        B[383:320],
+        B[447:384],
+        B[511:448],
+        B[575:512],
+        B[639:576],
+        B[703:640],
+        B[767:704],
+        B[831:768],
+        B[895:832],
+        B[959:896],
+        B[1023:960],
+        B[1087:1024],
+        B[1151:1088],
+        B[1215:1152],
+        B[1279:1216],
+        B[1343:1280],
+        B[1407:1344],
+        B[1471:1408],
+        B[1535:1472]);
+  $fwrite(f_a, {"%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n",
+       "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n",
+       "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n"},
+        A[63:0],
+        A[127:64],
+        A[191:128],
+        A[255:192],
+        A[319:256],
+        A[383:320],
+        A[447:384],
+        A[511:448],
+        A[575:512],
+        A[639:576],
+        A[703:640],
+        A[767:704],
+        A[831:768],
+        A[895:832],
+        A[959:896],
+        A[1023:960],
+        A[1087:1024],
+        A[1151:1088],
+        A[1215:1152],
+        A[1279:1216],
+        A[1343:1280],
+        A[1407:1344],
+        A[1471:1408],
+        A[1535:1472]);
+    $fclose(f_c);
+    $fclose(f_b);
+    $fclose(f_a);
+    $finish;
 
-end
+  end
 
 
 

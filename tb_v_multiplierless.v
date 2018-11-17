@@ -50,9 +50,9 @@ module tb;
   integer f_b;
   integer f_c;
 initial begin
-  f_a = $fopen("output\\output_2_a.txt");
-  f_b = $fopen("output\\output_2_b.txt");
-  f_c = $fopen("output\\output_2_c.txt");
+  f_a = $fopen("output\\output_2_a_multiplierless.txt");
+  f_b = $fopen("output\\output_2_b_multiplierless.txt");
+  f_c = $fopen("output\\output_2_c_multiplierless.txt");
   $monitor({"clk = %b; next_row = %d;  reset:%h cnt:%h loadOut:%h sel:%h ---\n",
   "%h\n",
   "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
