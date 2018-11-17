@@ -32,9 +32,9 @@ module subpixel_interpolation(clk,rst, in_row,next_row,
   output [63:0] fir_out_a;
   output [63:0] fir_out_b;
   output [63:0] fir_out_c;
-  output [959:0] temp_A;
+  // output [959:0] temp_A;
   output [959:0] temp_B;
-  output [959:0] temp_C;
+  // output [959:0] temp_C;
   output load_out;
   output [7:0] sel;
 
