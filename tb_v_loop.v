@@ -47,22 +47,22 @@ module tb;
   integer j;
 initial begin
   $monitor({"clk = %b; next_row = %d;  reset:%h cnt:%h loadOut:%h sel:%h ---\n",
-  "%h\n",
-  "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
+  "---ROW---\n%h\n------\n",
+  "%h\n---\n\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
   "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
   "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
    "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
    "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
    "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n\n"},
-  clk,next_row,reset,cnt, load_out, sel, input_row,fir_out_c,
-  temp_C[119:0],
-  temp_C[239:120],
-  temp_C[359:240],
-  temp_C[479:360],
-  temp_C[599:480],
-  temp_C[719:600],
-  temp_C[839:720],
-  temp_C[959:840],
+  clk,next_row,reset,cnt, load_out, sel, input_row,fir_out_b,
+  temp_B[119:0],
+  temp_B[239:120],
+  temp_B[359:240],
+  temp_B[479:360],
+  temp_B[599:480],
+  temp_B[719:600],
+  temp_B[839:720],
+  temp_B[959:840],
   C[63:0],
   C[127:64],
   C[191:128],
@@ -113,7 +113,7 @@ end
 
 initial begin
   $write("Loading rom...");
-  $readmemh("test_image_2.mem", im_memory);
+  $readmemh("image_array/test_image_2.mem", im_memory);
 
   for (i=0; i<15; i=i+1) begin
       im_rows[i] = {im_memory[i][14],im_memory[i][13],im_memory[i][12],im_memory[i][11],im_memory[i][10],
@@ -136,7 +136,7 @@ always
 initial begin
   // #3700 $finish;
   // #5300 $finish; //A and D finish
-  #12500 $finish;
+  #10500 $finish;
 
 end
 
