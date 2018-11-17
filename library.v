@@ -152,9 +152,9 @@ module input_shift_reg(clock, reset_L, load_L, in, out);
     else if (~load_L) begin
       //byte shift register
       for(i=0;i<14;i=i+1) begin
-        regi[i] = regi[i+1];
+        regi[i] <= regi[i+1];
       end
-      regi[14] = in;
+      regi[14] <= in;
 
       out = {regi[14],regi[13],regi[12],regi[11],regi[10],regi[9],regi[8],
              regi[7],regi[6],regi[5],regi[4],regi[3],regi[2],regi[1],regi[0]};
