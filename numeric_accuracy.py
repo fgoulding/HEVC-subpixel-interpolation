@@ -1,0 +1,93 @@
+from pprint import pprint
+from skimage.measure import compare_ssim as ssim
+from sklearn.metrics import mean_squared_error
+import numpy as np
+import matplotlib.pyplot as plt
+# from skimage import measure
+# print(dir(measure))
+
+def process_output_array(filename):
+    output_array = [];
+    split = 2;
+    with open(filename) as output:
+        for line in output.readlines():
+            pixels = [int(line[i:i+split], 16) for i in range(0, len(line)-1, split)][::-1];
+            output_array.insert(0, pixels); 
+    return output_array;
+
+
+def construct_image(subpixels, integer_pixels):
+    dim = len(integer_pixels);
+    image = np.zeros((dim*4, dim*4));
+    count = 0;
+    for i in xrange(dim):
+        for j in xrange(dim):
+
+            I = i*4;
+            J = j*4;
+            image[I][j] = integer_pixels[i][j];
+            image[I+1][J] = subpixels[0][i][j];
+            image[I+2][J] = subpixels[1][i][j];
+            image[I+3][J] = subpixels[2][i][j];
+
+            image[I][J+1] = subpixels[0][i+8][j];
+            image[I][J+2] = subpixels[1][i+8][j];
+            image[I][J+3] = subpixels[2][i+8][j];
+
+            image[I+1][J+1] = subpixels[0][i+16][j];
+            image[I+1][J+2] = subpixels[1][i+16][j];
+            image[I+1][J+3] = subpixels[2][i+16][j];
+
+            image[I+2][J+1] = subpixels[0][i+24][j];
+            image[I+2][J+2] = subpixels[1][i+24][j];
+            image[I+2][J+3] = subpixels[2][i+24][j];
+
+            image[I+3][J+1] = subpixels[0][i+32][j];
+            image[I+3][J+2] = subpixels[1][i+32][j];
+            image[I+3][J+3] = subpixels[2][i+32][j];
+
+    print count
+
+    return image;
+
+
+
+
+def main():
+
+    image_array = []
+    with open("image_array/test_image_2.mem") as file:
+        for line in file.readlines():
+            image_array.append([int(i,16) for i in line.strip().split()][3:11])
+    #pprint(len(image_array[3:11]))
+
+    A = process_output_array("output/output_2_a.txt");
+    B = process_output_array("output/output_2_b.txt");
+    C = process_output_array("output/output_2_c.txt");
+
+    out_verilog = [A, B, C];
+    image_actual = construct_image(out_verilog, image_array[3:11]);
+
+    A_loop = process_output_array("output/output_2_a_loop.txt");
+    B_loop = process_output_array("output/output_2_b_loop.txt");
+    C_loop = process_output_array("output/output_2_c_loop.txt");
+
+    out_loop = [A_loop, B_loop, C_loop]
+    image_pred = construct_image(out_loop, image_array[3:11]);
+
+    pprint(image_actual)
+    pprint(image_pred)
+
+    # out_loop = [A_loop, B_loop, C_loop]
+    # for i in xrange(len(out_verilog)):
+    #     print "Testing for output_" + chr(i + 65)
+    #     actual = np.matrix(out_verilog[i]);
+    #     pred = np.matrix(out_loop[i])
+    #     #print mean_squared_error(actual, pred)
+    #     print "Done testing for output_" + chr(i + 65)
+
+    s = ssim(image_actual, image_pred);
+    print s
+
+if __name__ == '__main__':
+    main()

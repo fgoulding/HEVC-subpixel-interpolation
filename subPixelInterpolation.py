@@ -1,5 +1,5 @@
 from pprint import pprint
-
+import numpy as np
 # 199 135 85 235 250 41 245
 
 def FIR_A(inputPixels,numPixels):
@@ -112,12 +112,13 @@ def subPixelInterpolate(image_array):
     #print("ya boi done")
     temp_B = ([map(hex, l) for l in zip(*A)])
     return outputA,outputB,outputC
+
+    
 def main():
     image_array = []
     with open("image_array/test_image_2.mem") as file:
         for line in file.readlines():
             image_array.append([int(i,16) for i in line.strip().split()])
-    #pprint(image_array)
 
     A,B,C = subPixelInterpolate(image_array)
     A_hex = [map(lambda x:"0x"+format(x,'02x'), l) for l in A]
