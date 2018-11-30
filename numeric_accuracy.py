@@ -1,5 +1,5 @@
 from pprint import pprint
-# from skimage.measure import compare_ssim as ssim
+from skimage.measure import compare_ssim as ssim
 from sklearn.metrics import mean_squared_error
 import numpy as np
 import matplotlib.pyplot as plt
@@ -27,13 +27,13 @@ def construct_image(subpixels, integer_pixels):
             I = i*4;
             J = j*4;
             image[I][J] = integer_pixels[i][j];
-            image[I+1][J] = subpixels[0][i][j];
-            image[I+2][J] = subpixels[1][i][j];
-            image[I+3][J] = subpixels[2][i][j];
+            image[I][J+1] = subpixels[0][i][j];
+            image[I][J+2] = subpixels[1][i][j];
+            image[I][J+3] = subpixels[2][i][j];
 
-            image[I][J+1] = subpixels[0][i+8][j];
-            image[I][J+2] = subpixels[1][i+8][j];
-            image[I][J+3] = subpixels[2][i+8][j];
+            image[I+1][J] = subpixels[0][i+8][j];
+            image[I+2][J] = subpixels[1][i+8][j];
+            image[I+3][J] = subpixels[2][i+8][j];
 
             image[I+1][J+1] = subpixels[0][i+16][j];
             image[I+1][J+2] = subpixels[1][i+16][j];
@@ -92,8 +92,8 @@ def main():
     #     #print mean_squared_error(actual, pred)
     #     print "Done testing for output_" + chr(i + 65)
 
-    # s = ssim(image_actual, image_pred);
-    # print s
+    s = ssim(image_actual, image_pred);
+    print s
 
 if __name__ == '__main__':
     main()
