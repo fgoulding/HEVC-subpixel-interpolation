@@ -15,7 +15,19 @@ def hex_matrix(start_value, rand=False, D=15):
 
 
 #print hex_matrix(31, True)
-print hex_matrix(0)
+#print hex_matrix(0)
 
-with open("test_image_3.mem", "w") as output_image:
-	output_image.write(hex_matrix(0)); 
+# with open("test_image_3.mem", "w") as output_image:
+# 	output_image.write(hex_matrix(0)); 
+
+matrix = "";
+with open("image_array/test_image_4.txt", "r") as input_image:
+	for line in input_image:
+		for char in line.split(" "):
+			matrix += str(hex(int(char))[2:]).zfill(2) + " ";
+		matrix += "\n";
+
+print matrix;
+
+with open("image_array/test_image_4.mem", "w") as output_image:
+	output_image.write(matrix); 
