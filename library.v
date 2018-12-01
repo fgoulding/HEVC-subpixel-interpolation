@@ -36,8 +36,11 @@ module counter (clk, reset_L, cnt);
     if (!reset_L)
       cnt = 0;
     else
+    begin
       cnt = cnt + 1;
-
+      if (cnt == 51)
+        cnt = 1;
+    end
 endmodule
 
 module counter_wA (clk, reset_L, active, cnt);
