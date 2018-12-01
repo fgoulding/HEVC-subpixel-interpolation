@@ -48,9 +48,9 @@ module tb;
   integer f_b;
   integer f_c;
 initial begin
-  f_a = $fopen("output/output_3_a_loop.txt");
-  f_b = $fopen("output/output_3_b_loop.txt");
-  f_c = $fopen("output/output_3_c_loop.txt");
+  f_a = $fopen("output/output_4_a_loop.txt");
+  f_b = $fopen("output/output_4_b_loop.txt");
+  f_c = $fopen("output/output_4_c_loop.txt");
   $monitor({"clk = %b; next_row = %d;  reset:%h cnt:%h loadOut:%h sel:%h ---\n",
   "---ROW---\n%h\n------\n",
   "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
@@ -109,7 +109,7 @@ end
 
 initial begin
   $write("Loading rom...");
-  $readmemh("image_array/test_image_3.mem", im_memory);
+  $readmemh("image_array/test_image_4.mem", im_memory);
 
   for (i=0; i<15; i=i+1) begin
       im_rows[i] = {im_memory[i][14],im_memory[i][13],im_memory[i][12],im_memory[i][11],im_memory[i][10],

@@ -67,7 +67,6 @@ def subPixelInterpolate(image_array):
     C = []
     # print image_array
     for image_row in image_array:
-
         #print image_row
         subA = FIR_A(image_row,8);
         subB = FIR_B(image_row,8);
@@ -116,7 +115,7 @@ def subPixelInterpolate(image_array):
 
 def main():
     image_array = []
-    with open("image_array/test_image_3.mem") as file:
+    with open("image_array/test_image_4.mem") as file:
         for line in file.readlines():
             image_array.append([int(i,16) for i in line.strip().split()])
 
@@ -130,17 +129,17 @@ def main():
     B_verilog = []
     C_verilog = []
 
-    with open("output/output_3_a_loop.txt") as a_output:
+    with open("output/output_4_a_loop.txt") as a_output:
     	for line in a_output.readlines():
     		digits = ['0x'+line[i:i+split] for i in range(0, len(line)-1, split)][::-1];
     		A_verilog.insert(0, digits);
 
-    with open("output/output_3_b_loop.txt") as b_output:
+    with open("output/output_4_b_loop.txt") as b_output:
     	for line in b_output.readlines():
     		digits = ['0x'+line[i:i+split] for i in range(0, len(line)-1, split)][::-1];
     		B_verilog.insert(0, digits);
 
-    with open("output/output_3_c_loop.txt") as c_output:
+    with open("output/output_4_c_loop.txt") as c_output:
     	for line in c_output.readlines():
     		digits = ['0x'+line[i:i+split] for i in range(0, len(line)-1, split)][::-1];
     		C_verilog.insert(0, digits);

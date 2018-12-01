@@ -1,4 +1,4 @@
-`include "sub_pixel.v"
+`include "sub_pixel_approx_multiplierless.v"
 
 module tb;
   reg clk, reset;
@@ -50,9 +50,9 @@ module tb;
   integer f_b;
   integer f_c;
 initial begin
-  f_a = $fopen("output/output_4_a.txt");
-  f_b = $fopen("output/output_4_b.txt");
-  f_c = $fopen("output/output_4_c.txt");
+  f_a = $fopen("output/output_4_a_approx_multiplierless.txt");
+  f_b = $fopen("output/output_4_b_approx_multiplierless.txt");
+  f_c = $fopen("output/output_4_c_approx_multiplierless.txt");
   $monitor({"clk = %b; next_row = %d;  reset:%h cnt:%h loadOut:%h sel:%h ---\n",
   "%h\n",
   "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n------\n",
