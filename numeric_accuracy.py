@@ -14,7 +14,6 @@ def process_output_array(filename):
             output_array.insert(0, pixels);
     return output_array;
 
-
 def construct_image(subpixels, integer_pixels):
     dim = len(integer_pixels);
     image = np.zeros((dim*4, dim*4));
@@ -132,14 +131,14 @@ def main():
     #pprint(image_pred)
 
     # regular interpolation without optimization as frames
-    image_frame = construct_frame(out_verilog, image_array[3:11]);
-    fig = plt.figure(figsize=(7, 7))
-    columns = 4
-    rows = 4
-    for i in range(1, columns*rows +1):
-        img = Image.fromarray((image_frame[i-1]).astype(np.uint8))
-        fig.add_subplot(rows, columns, i)
-        plt.imshow(img)
+    # image_frame = construct_frame(out_verilog, image_array[3:11]);
+    # fig = plt.figure(figsize=(7, 7))
+    # columns = 4
+    # rows = 4
+    # for i in range(1, columns*rows +1):
+    #     img = Image.fromarray((image_frame[i-1]).astype(np.uint8))
+    #     fig.add_subplot(rows, columns, i)
+    #     plt.imshow(img)
 
     plt.show()
 
