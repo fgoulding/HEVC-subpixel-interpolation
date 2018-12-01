@@ -21,6 +21,7 @@ module tb;
   wire [7:0] so;
   wire [119:0] currentPixels;
   wire [63:0] next_row;
+  wire [63:0] next_row_T;
 
   subpixel_interpolation dut(
     .clk(clk),
@@ -39,10 +40,12 @@ module tb;
     .temp_C(temp_C),
     .load_out(load_out),
     .so(so),
-    .currentPixels(currentPixels)
+    .currentPixels(currentPixels),
+    .next_row_T(next_row_T)
+
     );
 
-  assign input_row = im_rows[next_row];
+  assign input_row = im_rows[next_row_T];
 
   integer i;
   integer j;
@@ -53,8 +56,8 @@ initial begin
   // f_a = $fopen("output/output_3_a.txt");
   // f_b = $fopen("output/output_3_b.txt");
   // f_c = $fopen("output/output_3_c.txt");
-  $monitor({"%d | %d | %h, loadOut:%h --- ","%h"},
-  next_row, so, cnt,load_out,fir_out_c);
+  $monitor({"%d | %d | %h, loadOut:%h --- ","inputRow: %h ||","outputRow: %h"},
+  next_row, so, cnt,load_out,input_row,fir_out_c);
 
   // C[63:0],
   // C[127:64],
@@ -110,9 +113,9 @@ initial begin
   // $readmemh("image_array/test_image_2.mem", im_memory);
 
   for (i=0; i<28800; i=i+1) begin
-      im_rows[i] = {im_memory[i][14],im_memory[i][13],im_memory[i][12],im_memory[i][11],im_memory[i][10],
-                    im_memory[i][9],im_memory[i][8],im_memory[i][7],im_memory[i][6],im_memory[i][5],
-                    im_memory[i][4],im_memory[i][3],im_memory[i][2],im_memory[i][1],im_memory[i][0]};
+      im_rows[i] = {im_memory[i][0],im_memory[i][1],im_memory[i][2],im_memory[i][3],im_memory[i][4],
+                    im_memory[i][5],im_memory[i][6],im_memory[i][7],im_memory[i][8],im_memory[i][9],
+                    im_memory[i][10],im_memory[i][11],im_memory[i][12],im_memory[i][13],im_memory[i][14]};
   end
   $display("Done");
   clk = 0;
@@ -128,7 +131,7 @@ always
 
 
 initial begin
-  #2000
+  #40000
 // $fwrite(f_c, {"%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n",
 //     "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n",
 //     "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n",

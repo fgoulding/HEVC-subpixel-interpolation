@@ -1,5 +1,5 @@
 `include "library.v"
-`include "input_mux.v"
+`include "input_mux_single_row.v"
 `include "fir.v"
 
 /**********************
@@ -21,13 +21,6 @@ module subpixel_interpolation(clk,rst, in_row,next_row,
   // this should just be 1 row in size...
   input  [119:0] in_row;
   output [63:0] next_row;
-
-  // input  [1799:0] in_buffer; //for (4+7)*(4+7) interpolation
-
-  // TODO: deal with later
-  // output [2559:0] out_A; //feedback buffer
-  // output [2559:0] out_B; //feedback buffer
-  // output [2559:0] out_C; //feedback buffer
 
   output [7:0] cnt;
   output [63:0] fir_out_a;
@@ -62,16 +55,20 @@ module subpixel_interpolation(clk,rst, in_row,next_row,
   wire load_out,load_L,load_in;
   wire _update_row;
   wire [63:0] next_row;
+  wire [63:0] meta_row;
+
   assign _update_row = 1'b1;
 
   counter_wA row_counter(clk,rst, _update_row, next_row);
   counter pc(clk, rst, cnt);
+  counter_903reset meta_row_counter(clk, rst, meta_row);
+
   register #(.WIDTH(8)) select(clk, rst, 1'b0, cnt, sel);
   register #(.WIDTH(8)) select2(clk, rst, 1'b0, sel, sel2);
 
   // shift register where output is in_buffer
   wire  [1799:0] in_buffer; //for (4+7)*(4+7) interpolation
-  assign first_round = (next_row < 51);
+  assign first_round = (meta_row < 52);
   assign load_in = !( (first_round && (cnt < 16)) || (!first_round && (cnt < 13)) );
   input_shift_reg input_register(clk, rst, load_in,in_row,in_buffer);
   input_array_mux input_mux(clk,rst,sel2,s,in_buffer, temp_A, temp_B, temp_C, sel2, currentPixels);
@@ -135,7 +132,7 @@ module subpixel_interpolation(clk,rst, in_row,next_row,
   shift_reg sr_B(clk, rst, load_L, fir_out_b , temp_B);
   shift_reg sr_C(clk, rst, load_L, fir_out_c , temp_C);
 
-  assign load_out = !(((so > 1) && (so < 10)) || ((so > 15) && (so < 51)));
+  assign load_out = !(((so > 1) && (so < 10)) || ((so > 15) && (so < 52)));
   // output_filler filler_a(clk, rst, load_out, sel, fir_out_a, out_A);
   // output_filler filler_b(clk, rst, load_out, sel, fir_out_b, out_B);
   // output_filler filler_c(clk, rst, load_out, sel, fir_out_c, out_C);
