@@ -84,7 +84,6 @@ module  input_array_mux(
     end else if (sel < half_c_cols) begin
       mux <= in_half_C_buffer[sel-half_b_cols];
     end
-
     else begin
       mux <= in_buffer[14];
     end

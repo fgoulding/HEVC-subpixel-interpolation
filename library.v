@@ -38,8 +38,8 @@ module counter (clk, reset_L, cnt);
     else
     begin
       cnt = cnt + 1;
-      if (cnt == 52)
-        cnt = 2;
+      if (cnt == 51)
+        cnt = 1;
     end
 endmodule
 
@@ -61,10 +61,10 @@ module counter_903reset (clk, reset_L, cnt);
 endmodule
 
 
-module counter_wA (clk, reset_L, active, cnt);
+module counter_wA (clk, reset_L, active_L, cnt);
   input		clk;
   input		reset_L;
-  input		active;
+  input		active_L;
   output	[63:0]	cnt;
   reg	[63:0]	cnt;
 
@@ -72,7 +72,7 @@ module counter_wA (clk, reset_L, active, cnt);
     if (!reset_L)
       cnt = 0;
     else begin
-      if (active)
+      if (!active_L)
         cnt = cnt + 1;
     end
 endmodule

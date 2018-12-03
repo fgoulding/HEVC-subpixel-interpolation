@@ -3,8 +3,8 @@
 module tb;
   reg clk, reset;
   reg [55:0] inputPixels;
-  reg [7:0] im_memory [0:28799][0:14];
-  reg [119:0] im_rows [0:28799];
+  reg [7:0] im_memory [0:28799][0:14];// 28799
+  reg [119:0] im_rows [0:28799];// 28799
   wire [119:0] input_row;
   reg [1799:0] integer_array;
   // wire [2559:0] A;
@@ -22,7 +22,7 @@ module tb;
   wire [119:0] currentPixels;
   wire [63:0] next_row;
   wire [63:0] next_row_T;
-
+wire load_L;
   subpixel_interpolation dut(
     .clk(clk),
     .rst(reset),
@@ -41,11 +41,10 @@ module tb;
     .load_out(load_out),
     .so(so),
     .currentPixels(currentPixels),
-    .next_row_T(next_row_T)
-
+    .load_L(load_L)
     );
 
-  assign input_row = im_rows[next_row_T];
+  assign input_row = im_rows[next_row];
 
   integer i;
   integer j;
@@ -56,24 +55,19 @@ initial begin
   // f_a = $fopen("output/output_3_a.txt");
   // f_b = $fopen("output/output_3_b.txt");
   // f_c = $fopen("output/output_3_c.txt");
-  $monitor({"%d | %d | %h, loadOut:%h --- ","inputRow: %h ||","outputRow: %h"},
-  next_row, so, cnt,load_out,input_row,fir_out_c);
-
-  // C[63:0],
-  // C[127:64],
-  // C[191:128],
-  // C[255:192],
-  // C[319:256],
-  // C[383:320],
-  // C[447:384],
-  // C[511:448],
-  // C[575:512],
-  // C[639:576],
-  // C[703:640],
-  // C[767:704],
-  // C[831:768],
-  // C[895:832],
-  // C[959:896],
+  $monitor({"%d | %d | %d, loadOut:%h --- ","inputRow: %h ||","%d outputRow: %h"
+  // ,"\n %h\n  %h\n  %h\n  %h\n  %h\n  %h\n  %h\n  %h\n"
+  },
+  next_row, so, cnt,load_out,input_row,load_L,fir_out_c);
+  //
+  // temp_C[119:0],
+  // temp_C[239:120],
+  // temp_C[359:240],
+  // temp_C[479:360],
+  // temp_C[599:480],
+  // temp_C[719:600],
+  // temp_C[839:720],
+  // temp_C[959:840]);
   // C[1023:960],
   // C[1087:1024],
   // C[1151:1088],
@@ -111,27 +105,32 @@ initial begin
   $write("Loading rom...");
   $readmemh("split_images/paris_red_rows.txt", im_memory);
   // $readmemh("image_array/test_image_2.mem", im_memory);
-
+  // $readmemh("split_images/paris_red_2", im_memory);
+  // for (i=0; i<15; i=i+1) begin
   for (i=0; i<28800; i=i+1) begin
       im_rows[i] = {im_memory[i][0],im_memory[i][1],im_memory[i][2],im_memory[i][3],im_memory[i][4],
                     im_memory[i][5],im_memory[i][6],im_memory[i][7],im_memory[i][8],im_memory[i][9],
                     im_memory[i][10],im_memory[i][11],im_memory[i][12],im_memory[i][13],im_memory[i][14]};
+        // im_rows[i] = {im_memory[i][14],im_memory[i][13],im_memory[i][12],im_memory[i][11],im_memory[i][10],
+        //               im_memory[i][9],im_memory[i][8],im_memory[i][7],im_memory[i][6],im_memory[i][5],
+        //               im_memory[i][4],im_memory[i][3],im_memory[i][2],im_memory[i][1],im_memory[i][0]};
+
   end
   $display("Done");
   clk = 0;
   reset = 0;
-  #20;
+  #35;
   reset = 1;
 
 end
 
 
 always
-  #15 clk = !clk;
+  #30 clk = !clk;
 
 
 initial begin
-  #40000
+  #20000
 // $fwrite(f_c, {"%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n",
 //     "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n",
 //     "%h\n%h\n%h\n%h\n%h\n%h\n%h\n%h\n",

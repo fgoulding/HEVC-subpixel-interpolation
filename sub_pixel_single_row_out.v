@@ -12,7 +12,7 @@ module subpixel_interpolation(clk,rst, in_row,next_row,
                               // out_A, out_B, out_C,
                               cnt,
                               fir_out_a, fir_out_b, fir_out_c,
-                              temp_A, temp_B,temp_C, load_out, so,currentPixels,next_row);
+                              temp_A, temp_B,temp_C, load_out, so,currentPixels,load_L);
   parameter num_pixel = 8;
   parameter sizeofPixel = 8;
   input clk;
@@ -31,7 +31,7 @@ module subpixel_interpolation(clk,rst, in_row,next_row,
   output [959:0] temp_C;
   output load_out;
   output [7:0] so;
-
+output load_L;
   /////////////////////////////
   output [119:0] currentPixels;
   wire [119:0] currentPixels;
@@ -59,7 +59,7 @@ module subpixel_interpolation(clk,rst, in_row,next_row,
 
   assign _update_row = 1'b1;
 
-  counter_wA row_counter(clk,rst, _update_row, next_row);
+  counter_wA row_counter(clk,rst, load_in, next_row);
   counter pc(clk, rst, cnt);
   counter_903reset meta_row_counter(clk, rst, meta_row);
 
@@ -123,7 +123,7 @@ module subpixel_interpolation(clk,rst, in_row,next_row,
   FIR_C filter_c7(clk,rst, currentPixels[48 +:64], fir_out_c[48 +:8]);
   FIR_C filter_c8(clk,rst, currentPixels[56 +:64], fir_out_c[56 +:8]);
 
-  assign load_L = !(so<(num_pixel+8));
+  assign load_L = !(so<(num_pixel+8) || so>(48));
 
   /*
    * registers to hold the horizontal half pixels
@@ -132,7 +132,7 @@ module subpixel_interpolation(clk,rst, in_row,next_row,
   shift_reg sr_B(clk, rst, load_L, fir_out_b , temp_B);
   shift_reg sr_C(clk, rst, load_L, fir_out_c , temp_C);
 
-  assign load_out = !(((so > 1) && (so < 10)) || ((so > 15) && (so < 52)));
+  assign load_out = !(((so > 1) && (so < 10)) || ((so > 15) && (so < 51)));
   // output_filler filler_a(clk, rst, load_out, sel, fir_out_a, out_A);
   // output_filler filler_b(clk, rst, load_out, sel, fir_out_b, out_B);
   // output_filler filler_c(clk, rst, load_out, sel, fir_out_c, out_C);
