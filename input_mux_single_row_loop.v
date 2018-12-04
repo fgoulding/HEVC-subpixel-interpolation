@@ -87,17 +87,18 @@ module  input_array_mux(
         mux[111:104] <= in_buffer[13][val +: 8];
         mux[119:112] <= in_buffer[14][val +: 8];
 
-      end else if (sel < half_a_cols) begin
+      // end else if (sel < half_a_cols) begin
       //$display("in temp_a: %d",sel);
-        mux <= in_half_A_buffer[sel-integer_cols];
+        // mux <= in_half_A_buffer[sel-integer_cols];
       end else if (sel < half_b_cols) begin
       //$display("in temp_b: %d",sel);
+        mux <= in_half_A_buffer[sel-integer_cols];
 
-        mux <= in_half_B_buffer[sel-half_a_cols];
-      end else if (sel < half_c_cols) begin
+        // mux <= in_half_B_buffer[sel-half_a_cols];
+      // end else if (sel < half_c_cols) begin
       //$display("in temp_c: %d",sel);
 
-        mux <= in_half_C_buffer[sel-half_b_cols];
+        // mux <= in_half_C_buffer[sel-half_b_cols];
       end
       else begin
       //$display("in default: %d",sel);
@@ -138,7 +139,7 @@ module  input_array_mux(
       end else if (sel < half_b_cols_SecondRound) begin
       // $display("2 temp_b: %d -- ",sel);
 
-        mux <= in_half_B_buffer[sel-half_a_cols];
+        mux <= in_half_B_buffer[sel-integer_cols];
       // end else if (sel < half_c_cols_SecondRound) begin
       // //$display("2 temp_c: %d -- ",sel);
       //
