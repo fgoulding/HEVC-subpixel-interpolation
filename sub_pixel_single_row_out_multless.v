@@ -1,6 +1,6 @@
 `include "library.v"
 `include "input_mux_single_row.v"
-`include "fir.v"
+`include "fir_approx_multiplierless.v"
 
 `define OFFSET 5
 
@@ -105,17 +105,17 @@ output [9:0] sel2;
   // genvar i;
   // generate
   //   for (i = 0; i < 8 ; i++) begin : generate_filter_a
-  //     FIR_A filter_a(clk,rst, currentPixels[i*sizeofPixel +: 64], any_out_A[i*4sizeOfPixel +:8]);
+  //     FIR_A_M filter_a(clk,rst, currentPixels[i*sizeofPixel +: 64], any_out_A[i*4sizeOfPixel +:8]);
   //   end
   // endgenerate
-  FIR_A filter_a1(clk,rst,s, so, currentPixels[0 +:64], fir_out_a[0 +:8]);
-  FIR_A filter_a2(clk,rst,s, so, currentPixels[8 +:64], fir_out_a[8 +:8]);
-  FIR_A filter_a3(clk,rst,s, so, currentPixels[16 +:64], fir_out_a[16 +:8]);
-  FIR_A filter_a4(clk,rst,s, so, currentPixels[24 +:64], fir_out_a[24 +:8]);
-  FIR_A filter_a5(clk,rst,s, so, currentPixels[32 +:64], fir_out_a[32 +:8]);
-  FIR_A filter_a6(clk,rst,s, so, currentPixels[40 +:64], fir_out_a[40 +:8]);
-  FIR_A filter_a7(clk,rst,s, so, currentPixels[48 +:64], fir_out_a[48 +:8]);
-  FIR_A filter_a8(clk,rst,s, so, currentPixels[56 +:64], fir_out_a[56 +:8]);
+  FIR_A_M filter_a1(clk,rst,s, so, currentPixels[0 +:64], fir_out_a[0 +:8]);
+  FIR_A_M filter_a2(clk,rst,s, so, currentPixels[8 +:64], fir_out_a[8 +:8]);
+  FIR_A_M filter_a3(clk,rst,s, so, currentPixels[16 +:64], fir_out_a[16 +:8]);
+  FIR_A_M filter_a4(clk,rst,s, so, currentPixels[24 +:64], fir_out_a[24 +:8]);
+  FIR_A_M filter_a5(clk,rst,s, so, currentPixels[32 +:64], fir_out_a[32 +:8]);
+  FIR_A_M filter_a6(clk,rst,s, so, currentPixels[40 +:64], fir_out_a[40 +:8]);
+  FIR_A_M filter_a7(clk,rst,s, so, currentPixels[48 +:64], fir_out_a[48 +:8]);
+  FIR_A_M filter_a8(clk,rst,s, so, currentPixels[56 +:64], fir_out_a[56 +:8]);
 
   // assign out_A[sel +: 64] = fir_out_a;
 
@@ -123,34 +123,34 @@ output [9:0] sel2;
   //
   // generate
   //   for (j = 0; j < 8 ; j++) begin : generate_filter_b
-  //     FIR_B filter_b(currentPixels[i*sizeofPixel:63+i*sizeofPixel], any_out_B[i*sizeOfPixel:7+i*sizeofPixel],clk,rst);
+  //     FIR_B_M filter_b(currentPixels[i*sizeofPixel:63+i*sizeofPixel], any_out_B[i*sizeOfPixel:7+i*sizeofPixel],clk,rst);
   //   end
   // endgenerate
   //
-  FIR_B filter_b1(clk,rst, currentPixels[0 +:64], fir_out_b[0 +:8]);
-  FIR_B filter_b2(clk,rst, currentPixels[8 +:64], fir_out_b[8 +:8]);
-  FIR_B filter_b3(clk,rst, currentPixels[16 +:64], fir_out_b[16 +:8]);
-  FIR_B filter_b4(clk,rst, currentPixels[24 +:64], fir_out_b[24 +:8]);
-  FIR_B filter_b5(clk,rst, currentPixels[32 +:64], fir_out_b[32 +:8]);
-  FIR_B filter_b6(clk,rst, currentPixels[40 +:64], fir_out_b[40 +:8]);
-  FIR_B filter_b7(clk,rst, currentPixels[48 +:64], fir_out_b[48 +:8]);
-  FIR_B filter_b8(clk,rst, currentPixels[56 +:64], fir_out_b[56 +:8]);
+  FIR_B_M filter_b1(clk,rst, currentPixels[0 +:64], fir_out_b[0 +:8]);
+  FIR_B_M filter_b2(clk,rst, currentPixels[8 +:64], fir_out_b[8 +:8]);
+  FIR_B_M filter_b3(clk,rst, currentPixels[16 +:64], fir_out_b[16 +:8]);
+  FIR_B_M filter_b4(clk,rst, currentPixels[24 +:64], fir_out_b[24 +:8]);
+  FIR_B_M filter_b5(clk,rst, currentPixels[32 +:64], fir_out_b[32 +:8]);
+  FIR_B_M filter_b6(clk,rst, currentPixels[40 +:64], fir_out_b[40 +:8]);
+  FIR_B_M filter_b7(clk,rst, currentPixels[48 +:64], fir_out_b[48 +:8]);
+  FIR_B_M filter_b8(clk,rst, currentPixels[56 +:64], fir_out_b[56 +:8]);
   // genvar k;
   // generate
   //   for (k = 0; k < 8 ; k++) begin : generate_filter_c
-  //     FIR_C filter_c(currentPixels[i*sizeofPixel:63+i*sizeofPixel], any_out_C[i*sizeOfPixel:7+i*sizeofPixel],clk,rst);
+  //     FIR_C_M filter_c(currentPixels[i*sizeofPixel:63+i*sizeofPixel], any_out_C[i*sizeOfPixel:7+i*sizeofPixel],clk,rst);
   //   end
   // endgenerate
   //
 
-  FIR_C filter_c1(clk,rst, currentPixels[0 +:64], fir_out_c[0 +:8]);
-  FIR_C filter_c2(clk,rst, currentPixels[8 +:64], fir_out_c[8 +:8]);
-  FIR_C filter_c3(clk,rst, currentPixels[16 +:64], fir_out_c[16 +:8]);
-  FIR_C filter_c4(clk,rst, currentPixels[24 +:64], fir_out_c[24 +:8]);
-  FIR_C filter_c5(clk,rst, currentPixels[32 +:64], fir_out_c[32 +:8]);
-  FIR_C filter_c6(clk,rst, currentPixels[40 +:64], fir_out_c[40 +:8]);
-  FIR_C filter_c7(clk,rst, currentPixels[48 +:64], fir_out_c[48 +:8]);
-  FIR_C filter_c8(clk,rst, currentPixels[56 +:64], fir_out_c[56 +:8]);
+  FIR_C_M filter_c1(clk,rst, currentPixels[0 +:64], fir_out_c[0 +:8]);
+  FIR_C_M filter_c2(clk,rst, currentPixels[8 +:64], fir_out_c[8 +:8]);
+  FIR_C_M filter_c3(clk,rst, currentPixels[16 +:64], fir_out_c[16 +:8]);
+  FIR_C_M filter_c4(clk,rst, currentPixels[24 +:64], fir_out_c[24 +:8]);
+  FIR_C_M filter_c5(clk,rst, currentPixels[32 +:64], fir_out_c[32 +:8]);
+  FIR_C_M filter_c6(clk,rst, currentPixels[40 +:64], fir_out_c[40 +:8]);
+  FIR_C_M filter_c7(clk,rst, currentPixels[48 +:64], fir_out_c[48 +:8]);
+  FIR_C_M filter_c8(clk,rst, currentPixels[56 +:64], fir_out_c[56 +:8]);
 
   // assign load_L = so[0];
 
