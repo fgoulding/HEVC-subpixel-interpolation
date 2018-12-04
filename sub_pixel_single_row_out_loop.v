@@ -1,5 +1,5 @@
 `include "library.v"
-`include "input_mux_single_row.v"
+`include "input_mux_single_row_loop.v"
 `include "fir.v"
 
 `define OFFSET 5
@@ -157,9 +157,9 @@ output [9:0] sel2;
   /*
    * registers to hold the horizontal half pixels
    */
-  shift_reg sr_A(clk, rst, s[0], fir_out_a , temp_A);
+  // shift_reg sr_A(clk, rst, s[0], fir_out_a , temp_A);
   shift_reg sr_B(clk, rst, s[0], fir_out_b , temp_B);
-  shift_reg sr_C(clk, rst, s[0], fir_out_c , temp_C);
+  // shift_reg sr_C(clk, rst, s[0], fir_out_c , temp_C);
 
   assign load_out_t = s[1];
   // output_filler filler_a(clk, rst, load_out, sel, fir_out_a, out_A);
