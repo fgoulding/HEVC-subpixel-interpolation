@@ -123,9 +123,13 @@ initial begin
   $readmemh("split_images/paris_red_1", im_memory);
 
   for (i=0; i<15; i=i+1) begin
-      im_rows[i] = {im_memory[i][14],im_memory[i][13],im_memory[i][12],im_memory[i][11],im_memory[i][10],
-                    im_memory[i][9],im_memory[i][8],im_memory[i][7],im_memory[i][6],im_memory[i][5],
-                    im_memory[i][4],im_memory[i][3],im_memory[i][2],im_memory[i][1],im_memory[i][0]};
+      // im_rows[i] = {im_memory[i][14],im_memory[i][13],im_memory[i][12],im_memory[i][11],im_memory[i][10],
+      //               im_memory[i][9],im_memory[i][8],im_memory[i][7],im_memory[i][6],im_memory[i][5],
+      //               im_memory[i][4],im_memory[i][3],im_memory[i][2],im_memory[i][1],im_memory[i][0]};
+      im_rows[i] = {im_memory[i][0],im_memory[i][1],im_memory[i][2],im_memory[i][3],im_memory[i][4],
+                    im_memory[i][5],im_memory[i][6],im_memory[i][7],im_memory[i][8],im_memory[i][9],
+                    im_memory[i][10],im_memory[i][11],im_memory[i][12],im_memory[i][13],im_memory[i][14]};
+
   end
   $display("Done");
   clk = 0;

@@ -3,8 +3,8 @@ module FIR_A(clock, reset_L,s,so, inputPixels, subPixel);
   input [63:0] inputPixels; // flattened input pixels
   input clock;
   input reset_L;
-  input [7:0] s;
-  output reg [7:0] so;
+  input [1:0] s;
+  output reg [1:0] so;
   output [7:0] subPixel;
   reg [7:0] subPixel;
   reg [15:0] sum_;

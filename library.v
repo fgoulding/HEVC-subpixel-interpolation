@@ -38,8 +38,8 @@ module counter (clk, reset_L, cnt);
     else
     begin
       cnt = cnt + 1;
-      if (cnt == 51)
-        cnt = 1;
+      if (cnt == 50)
+        cnt = 0;
     end
 endmodule
 

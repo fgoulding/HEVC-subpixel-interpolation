@@ -61,7 +61,7 @@ module subpixel_interpolation(clk,rst, in_row,next_row,
   wire load_out,load_L,load_in;
   wire _update_row;
   wire [63:0] next_row;
-  assign _update_row = 1'b1;
+  assign _update_row = 1'b0;
 
   counter_wA row_counter(clk,rst, _update_row, next_row);
   counter pc(clk, rst, cnt);

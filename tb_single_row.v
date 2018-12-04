@@ -17,11 +17,14 @@ module tb;
   wire [959:0] temp_B;
   wire [959:0] temp_C;
   wire [7:0] cnt;
-  wire load_out;
-  wire [7:0] so;
+  wire [9:0] sel2;
+
+  wire load_out_t;
+  wire [1:0] so,s;
   wire [119:0] currentPixels;
   wire [63:0] next_row;
   wire [63:0] next_row_T;
+  wire is_row,is_output_row;
 wire load_L;
   subpixel_interpolation dut(
     .clk(clk),
@@ -38,10 +41,15 @@ wire load_L;
     .temp_A(temp_A),
     .temp_B(temp_B),
     .temp_C(temp_C),
-    .load_out(load_out),
+    .load_out_t(load_out_t),
     .so(so),
+    .s(s),
+
     .currentPixels(currentPixels),
-    .load_L(load_L)
+    .load_L(load_L),
+    .is_row(is_row),
+    .is_output_row(is_output_row),
+    .sel2(sel2)
     );
 
   assign input_row = im_rows[next_row];
@@ -55,12 +63,25 @@ initial begin
   // f_a = $fopen("output/output_3_a.txt");
   // f_b = $fopen("output/output_3_b.txt");
   // f_c = $fopen("output/output_3_c.txt");
-  $monitor({"%d | %d | %d, loadOut:%h --- ","inputRow: %h ||","%d outputRow: %h"
-  // ,"\n %h\n  %h\n  %h\n  %h\n  %h\n  %h\n  %h\n  %h\n"
+  // $monitor({"%d | %b | %d, loadOut:%h --- is_row: %d inputRow: %h\n"
+  // // ,"\n %h\n  %h\n  %h\n  %h\n  %h\n  %h\n  %h\n  %h\n"
+  // },
+  // next_row, so, cnt, load_out_t, is_row, is_output_row,input_row);
+
+
+
+  $monitor({"%d | %b | %d | %d, loadOut:%h --- %h cPixels: %h ||"," outputRow: %h"
+  // ,"\n  %h\n  %h\n  %h\n  %h\n  %h\n  %h\n  %h\n  %h\n"
   },
-  next_row, so, cnt,load_out,input_row,load_L,fir_out_c);
-  //
-  // temp_C[119:0],
+  next_row, s, cnt, sel2[9:2],load_out_t, input_row, currentPixels,fir_out_c
+  );
+
+
+
+
+
+
+  // ,temp_C[119:0],
   // temp_C[239:120],
   // temp_C[359:240],
   // temp_C[479:360],

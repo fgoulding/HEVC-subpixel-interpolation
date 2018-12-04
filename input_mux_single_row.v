@@ -16,8 +16,8 @@ module  input_array_mux(
   parameter num_pixel = 8;
   input clock;
   input reset;
-  input [7:0] s;
-  output reg [7:0] so;
+  input [9:0] s;
+  output reg [1:0] so;
   input [1799:0] integer_array;
   input [959:0] a_half_array;
   input [959:0] b_half_array;
@@ -54,7 +54,7 @@ module  input_array_mux(
 
   always @(posedge clock)
  	begin: MUX
-    so = s;
+    so = s[1:0];
     if (sel < integer_rows) begin
       //select row from integer_array
       //use case to select row? or just pass an input row somehow?
@@ -78,13 +78,20 @@ module  input_array_mux(
       mux[119:112] <= in_buffer[14][val +: 8];
 
     end else if (sel < half_a_cols) begin
+    //$display("in temp_a: %d",sel);
       mux <= in_half_A_buffer[sel-integer_cols];
     end else if (sel < half_b_cols) begin
+    //$display("in temp_b: %d",sel);
+
       mux <= in_half_B_buffer[sel-half_a_cols];
     end else if (sel < half_c_cols) begin
+    //$display("in temp_c: %d",sel);
+
       mux <= in_half_C_buffer[sel-half_b_cols];
     end
     else begin
+    //$display("in default: %d",sel);
+
       mux <= in_buffer[14];
     end
  	end
