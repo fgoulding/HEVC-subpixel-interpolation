@@ -1,5 +1,5 @@
 `include "library.v"
-`include "input_mux_single_row.v"
+`include "input_mux_single_row_loop.v"
 `include "fir_approx_multiplierless.v"
 
 `define OFFSET 5
